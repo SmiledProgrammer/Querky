@@ -1,0 +1,23 @@
+version: '3'
+services:
+  querky-db:
+    image: postgres:14.2-alpine3.15
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: querky-db
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  querky-app:
+    image: querky:0.0.1
+    depends_on:
+      - querky-db
+    ports:
+      - "8080:8080"
+    environment:
+      DB_SERVER: querky-db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: querky-db
