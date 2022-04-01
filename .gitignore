@@ -34,3 +34,6 @@ build/
 
 ### Database docker volumes ###
 data/
+
+### Enviroment variables ###
+.env
