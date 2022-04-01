@@ -1,0 +1,8 @@
+### Ignore everything ###
+*
+
+### Exceptions for important files ###
+!src/
+!target/
+!pom.xml
+!.git/
