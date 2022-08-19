@@ -17,6 +17,16 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    // Temporary
+    public void createUser(String email) {
+        User newUser = User.builder()
+                .username(email)
+                .email(email)
+                .build();
+        userRepository.save(newUser);
+    }
+
+    // For future use case
     public void registerUser(@Valid RegisterUserDto userDto) {
         String email = OAuth2Utils.getCurrentUserEmail();
         User newUser = User.builder()
@@ -31,5 +41,9 @@ public class UserService {
                 () -> new ResourceNotFoundException("Could not find user with ID of \"" + id + "\"."));
         // TODO: map User to UserDto
         return null;
+    }
+
+    public boolean userExists(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
