@@ -11,8 +11,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Profile("!test")
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+@Profile("test")
+public class SecurityTestConfiguration extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationSuccessHandler successHandler;
 
@@ -23,7 +23,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .oauth2Login()
+                .formLogin()
                 .successHandler(successHandler);
     }
 }
