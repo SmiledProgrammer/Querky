@@ -15,7 +15,8 @@ public class WebSocketTestConfiguration implements WebSocketMessageBrokerConfigu
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry
                 .setApplicationDestinationPrefixes("/app")
-                .enableStompBrokerRelay("/topic", "/queue");
+                .setUserDestinationPrefix("/user")
+                .enableSimpleBroker("/topic", "/queue", "/user/queue/user");
     }
 
     @Override

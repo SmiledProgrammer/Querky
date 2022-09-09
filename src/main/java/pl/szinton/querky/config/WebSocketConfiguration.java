@@ -28,11 +28,14 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry
                 .setApplicationDestinationPrefixes("/app")
-                .enableStompBrokerRelay("/topic", "/queue")
+                .setUserDestinationPrefix("/user")
+                .enableStompBrokerRelay("/topic", "/queue", "/user")
                 .setRelayHost(rabbitHostname)
                 .setRelayPort(rabbitPort)
                 .setSystemLogin(rabbitUser)
-                .setSystemPasscode(rabbitPassword);
+                .setSystemPasscode(rabbitPassword)
+                .setClientLogin(rabbitUser)
+                .setClientPasscode(rabbitPassword);
     }
 
     @Override
