@@ -1,4 +1,4 @@
-package pl.szinton.querky.service;
+package pl.szinton.querky.service.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
