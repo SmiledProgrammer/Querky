@@ -44,13 +44,13 @@ let BattlesGamePresenter = new function() {
 	this.init = function() {
 		initMemberVariables();
 		BattlesClient.init();
-		BattlesClient.receiveJoinedTableData = this.handleJoinedTableData;
-		BattlesClient.receivePlayerJoinedTable = this.handlePlayerJoinedTable;
-		BattlesClient.receivePlayerLeftTable = this.handlePlayerLeftTable;
-		BattlesClient.receivePlayerReady = this.handlePlayerReady;
-		BattlesClient.receiveGameStart = this.handleGameStart;
-		BattlesClient.receivePlayerGuess = this.handlePlayerGuess;
-		BattlesClient.receiveRoundEnd = this.handleRoundEnd;
+		BattlesClient.handleJoinedTableData = this.handleJoinedTableData;
+		BattlesClient.handlePlayerJoinedTable = this.handlePlayerJoinedTable;
+		BattlesClient.handlePlayerLeftTable = this.handlePlayerLeftTable;
+		BattlesClient.handlePlayerReady = this.handlePlayerReady;
+		BattlesClient.handleGameStart = this.handleGameStart;
+		BattlesClient.handlePlayerGuess = this.handlePlayerGuess;
+		BattlesClient.handleRoundEnd = this.handleRoundEnd;
 	};
 
 	this.joinTable = function(tableNumber) {
@@ -76,7 +76,7 @@ let BattlesGamePresenter = new function() {
 		this.tableNumber = tableNumber;
 		this.gameTimeLeft = gameTime;
 		this.roundTimeLeft = roundTime;
-		//this.gameState = somehowConvertGameState(gameState); // TODO
+		this.gameState = gameState;
 		this.playerOnTable = players;
 		
 		//startGameTimer()

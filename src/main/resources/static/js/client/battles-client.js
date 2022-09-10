@@ -1,38 +1,48 @@
 'use strict';
 
 let BattlesClient = new function() {
-	
+
+	let stompClient = undefined;
+
 	this.init = function() {
-		// TODO: set BattlesClient.handleReceiveTableMessage as /topic/table websocket handler
+		let socket = new SockJS("/querky");
+		stompClient = Stomp.over(socket);
+		stompClient.connect({}, function(frame) {
+			let sessionId = /\/([^\/]+)\/websocket/.exec(socket._transport.url)[1];
+			console.log("Connected to Querky. Session ID is: " + sessionId);
+			stompClient.subscribe("/queue/direct-" + sessionId, BattlesClient.handleReceiveMessage);
+			stompClient.subscribe("/topic/words", BattlesClient.handleReceiveMessage)
+			stompClient.send("/app/words/join-table", {}, "[\"100\"]");
+		});
 	};
-	
-	/* Endpoint: /topic/table/NUMBER */
-	this.handleReceiveTableMessage = function(rawMsg) {
+
+	this.handleReceiveMessage = function(rawMsg) {
 		let msg = convertRawMessage(rawMsg);
 		switch (msg.c) {
-			case 101: this.receiveJoinedTableData(msg.d[0], msg.d[1], msg.d[2], msg.d[3], msg.d[4]); break;
-			case 102: this.receivePlayerJoinedTable(msg.d[0]); break;
-			case 103: this.receivePlayerLeftTable(msg.d[0]); break;
-			case 105: this.receivePlayerReady(msg.d[0]); break;
-			case 111: this.receiveGameStart(); break;
-			case 221: this.receivePlayerGuess(msg.d[0], msg.d[1]); break;
-			case 222: this.receiveRoundEnd(msg.d[0]); break;
-			default: console.log("[ERROR] Unknown websockets message type.");
+			case 101: receiveJoinedTableData(msg.d[0], msg.d[1], msg.d[2], msg.d[3], msg.d[4]); break;
+			case 102: receivePlayerJoinedTable(msg.d[0]); break;
+			case 103: receivePlayerLeftTable(msg.d[0]); break;
+			case 105: receivePlayerReady(msg.d[0]); break;
+			case 111: receiveGameStart(); break;
+			case 221: receivePlayerGuess(msg.d[0], msg.d[1]); break;
+			case 222: receiveRoundEnd(msg.d[0]); break;
+			default: console.error("Unknown websockets message type.");
 		}
 	};
 
 	let convertRawMessage = function(rawMsg) {
 		try {
-			return JSON.parse(rawMsg);
+			let noEscapesMsg = rawMsg.body.replace(/\\"/g, '"');
+			return JSON.parse(noEscapesMsg);
 		} catch (err) {
-			console.log("[ERROR] Couldn't parse websockets message JSON content.");
+			console.error("Couldn't parse websockets message JSON content.");
 		}
 		return null;
 	};
 	
 	/* Endpoint: /words/join-table */
 	this.sendJoinTable = function(tableNumber) {
-		
+		// TODO: set BattlesClient.handleReceiveTableMessage as /topic/table websocket handler
 	};
 	
 	/* Endpoint: /words/leave-table */
@@ -49,32 +59,67 @@ let BattlesClient = new function() {
 	this.sendGuess = function(wordGuess) {
 		
 	};
-	
-	this.receiveJoinedTableData = function(tableNumber, gameTime, roundTime, gameState, players) {
-		throw new Error("This function must be overridden.");
+
+	let receiveJoinedTableData = function(tableNumberStr, gameTimeStr, roundTimeStr, gameStateStr, playersStr) {
+		let tableNumber = parseInt(tableNumberStr);
+		let gameTime = parseInt(gameTimeStr);
+		let roundTime = parseInt(roundTimeStr);
+		// let gameState = fetchGameStateFromString(gameStateStr);
+		// let players = fetchPlayersFromString(playersStr);
+		let gameState = gameStateStr; // TODO: remove
+		let players = playersStr; // TODO: remove
+		BattlesClient.handleJoinedTableData(tableNumber, gameTime, roundTime, gameState, players);
+	};
+
+	let receivePlayerJoinedTable = function(nickname) {
+
+	};
+
+	let receivePlayerLeftTable = function(nickname) {
+
+	};
+
+	let receivePlayerReady = function(nickname, ready) {
+
+	};
+
+	let receiveGameStart = function() {
+
+	};
+
+	let receivePlayerGuess = function(nickname, hitList) {
+
 	};
 	
-	this.receivePlayerJoinedTable = function(nickname) {
+	let receiveRoundEnd = function(pointsList) {
+
+	};
+
+	this.handleJoinedTableData = function(tableNumber, gameTime, roundTime, gameState, players) {
 		throw new Error("This function must be overridden.");
 	};
-	
-	this.receivePlayerLeftTable = function(nickname) {
+
+	this.handlePlayerJoinedTable = function(nickname) {
 		throw new Error("This function must be overridden.");
 	};
-	
-	this.receivePlayerReady = function(nickname, ready) {
+
+	this.handlePlayerLeftTable = function(nickname) {
 		throw new Error("This function must be overridden.");
 	};
-	
-	this.receiveGameStart = function() {
+
+	this.handlePlayerReady = function(nickname, ready) {
 		throw new Error("This function must be overridden.");
 	};
-	
-	this.receivePlayerGuess = function(nickname, hitList) {
+
+	this.handleGameStart = function() {
 		throw new Error("This function must be overridden.");
 	};
-	
-	this.receiveRoundEnd = function(pointsList) {
+
+	this.handlePlayerGuess = function(nickname, hitList) {
+		throw new Error("This function must be overridden.");
+	};
+
+	this.handleRoundEnd = function(pointsList) {
 		throw new Error("This function must be overridden.");
 	};
 }

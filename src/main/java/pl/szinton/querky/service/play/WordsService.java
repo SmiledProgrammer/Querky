@@ -37,6 +37,6 @@ public class WordsService {
         playersOnTables.put(username, tableNumber);
         gameTables.get(tableNumber).addPlayer(username);
         // TODO: create table data
-        return EventMessage.fromWordsEvent(WordsEvent.TABLE_DATA, "...");
+        return EventMessage.fromWordsEvent(WordsEvent.TABLE_DATA, "1", "2", "3", "4", "5");
     }
 }

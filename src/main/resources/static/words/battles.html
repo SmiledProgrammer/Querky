@@ -25,7 +25,9 @@
 			</div>
 			<div id="keyboard" class="gameKeyboard"></div>
 		</div>
-		
+
+		<script src="/webjars/sockjs-client/1.1.1/sockjs.min.js"></script>
+		<script src="/webjars/stomp-websocket/2.3.4/stomp.min.js"></script>
 		<script src="../js/render/website-ui.js"></script>
 		<script src="../js/render/game-ui.js"></script>
 		<script src="../js/view/game-view.js"></script>
@@ -39,7 +41,6 @@
 			GameUI.createOpponentBoards();
 			GameUI.renderWordTables();
 			BattlesGamePresenter.init();
-			BattlesClient.receivePlayerJoinedTable();
 		</script>
 	</body>
 </html>
