@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pl">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="description" content="Simple word guessing game">
+		<meta name="keywords" content="words, word game, słowa, gra słowna">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="../css/main.css">
+		<link rel="stylesheet" href="../css/game.css">
+		<link rel="stylesheet" href="../css/battles.css">
+		<title>Word game - Battles mode</title>
+	</head>
+	<body class="unselectable">
+		<div class="gameInfoBar">
+			<span class="tableNumber">Stół #127</span>
+			<b>|</b>
+			<span class="gameTimer">15:00</span>
+		</div>
+		<div class="gameArea">
+			<div class="playerBoardsArea">
+				<!-- TODO: move this next to players' tables and add id -->
+				<!-- <div class="overlay">Hello there</div> -->
+				<div id="activePlayer" class="activeBoard playerBoard"></div>
+				<div class="opponentBoards"></div>
+			</div>
+			<div id="keyboard" class="gameKeyboard"></div>
+		</div>
+		
+		<script src="../js/render/website-ui.js"></script>
+		<script src="../js/render/game-ui.js"></script>
+		<script src="../js/view/game-view.js"></script>
+		<script src="../js/client/battles-client.js"></script>
+		<script src="../js/presenter/battles-game-presenter.js"></script>
+		<script>
+			WebsiteUI.renderHeader();
+			WebsiteUI.renderFooter();
+			GameUI.renderKeyboard();
+			GameUI.renderActivePlayerInfo();
+			GameUI.createOpponentBoards();
+			GameUI.renderWordTables();
+			BattlesGamePresenter.init();
+			BattlesClient.receivePlayerJoinedTable();
+		</script>
+	</body>
+</html>
