@@ -12,7 +12,9 @@ public enum WordsEvent {
     PLAYER_READY(105),
     GAME_START(111),
     PLAYER_GUESS(221),
-    ROUND_END(222);
+    ROUND_END(222),
+
+    ERROR_NO_SUCH_TABLE(911);
 
     private final int code;
 }
