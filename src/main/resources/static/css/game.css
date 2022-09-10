@@ -1,0 +1,103 @@
+:root {
+  --invalid-word-color: #ff0000;
+  --invalid-word-background-color: #ffdddd;
+  --not-in-word-color: #707070;
+  --misplaced-color: #f9ff40;
+  --correct-color: #1ddb00;
+}
+
+.gameArea {
+  width: 34rem;
+  height: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2rem;
+}
+
+div.playerBoard {
+  text-align: center;
+}
+
+div.playerBoard table {
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  table-layout: fixed;
+  position: relative;
+}
+
+div.activeBoard {
+  height: 60%;
+  margin: auto;
+}
+
+div.activeBoard table {
+  border-spacing: .16rem;
+}
+
+div.activeBoard td {
+  width: 3.5rem;
+  height: 3.5rem;
+  border: .2rem solid black;
+  border-radius: .5rem;
+  font-size: 2.3rem;
+  font-weight: bold;
+  background-color: #f8f8f8;
+}
+
+div.gameKeyboard {
+  height: 30%;
+  margin-top: 2%;
+  margin-bottom: 6%;
+}
+
+div.keyboardRow {
+  width: 90%;
+  height: 25%;
+  margin-bottom: .4rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+div.keyboardRow button {
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  font-size: 1.3rem;
+  margin: .2rem;
+  background-color: #efefef;
+  border-radius: .4rem;
+  border-width: .1rem;
+}
+
+#backspaceKey {
+  font-size: 2rem;
+  font-weight: bold;
+  background-color: #efefef;
+}
+
+.invalidWord.invalidWord, .invalidWord.invalidWord * {
+  background-color: var(--invalid-word-background-color);
+  border-color: var(--invalid-word-color);
+  color: var(--invalid-word-color);
+}
+
+.letterNotInWord.letterNotInWord {
+  background-color: var(--not-in-word-color);
+}
+
+.letterMisplaced.letterMisplaced {
+  background-color: var(--misplaced-color);
+}
+
+.letterCorrect.letterCorrect {
+  background-color: var(--correct-color);
+}
+
+td.letterNotInWord.letterNotInWord,
+td.letterMisplaced.letterMisplaced,
+td.letterCorrect.letterCorrect {
+  border-color: transparent;
+}
