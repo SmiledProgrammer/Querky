@@ -11,10 +11,10 @@ import java.util.Map;
 @Service
 public class WordsService {
 
-    private static final int TABLES_COUNT = 1;
+    protected static final int TABLES_COUNT = 1;
 
-    private final Map<String, Integer> playersOnTables;
-    private final Map<Integer, WordsBattlesGame> gameTables;
+    protected final Map<String, Integer> playersOnTables;
+    protected final Map<Integer, WordsBattlesGame> gameTables;
 
     public WordsService() {
         this.playersOnTables = new HashMap<>();
@@ -31,12 +31,37 @@ public class WordsService {
 
     public EventMessage joinTable(String username, int tableNumber) {
         if (!gameTables.containsKey(tableNumber)) {
-            return EventMessage.fromWordsEvent(WordsEvent.ERROR_NO_SUCH_TABLE,
-                    "There is no table with this number.");
+            return EventMessage.fromWordsEvent(WordsEvent.ERROR_NO_SUCH_TABLE);
         }
+        WordsBattlesGame table = gameTables.get(tableNumber);
+        if (table.hasPlayer(username)) {
+            return EventMessage.fromWordsEvent(WordsEvent.ERROR_PLAYER_ALREADY_ON_TABLE);
+        }
+        if (table.hasReachedPlayersLimit()) {
+            return EventMessage.fromWordsEvent(WordsEvent.ERROR_TABLE_FULL);
+        }
+        table.addPlayer(username);
         playersOnTables.put(username, tableNumber);
-        gameTables.get(tableNumber).addPlayer(username);
-        // TODO: create table data
-        return EventMessage.fromWordsEvent(WordsEvent.TABLE_DATA, "1", "2", "3", "4", "5");
+        return EventMessage.fromWordsEvent(WordsEvent.TABLE_DATA, tableNumber, table.getGameStartTimeLeft(),
+                table.getRoundsLeft(), table.getRoundTimeLeft(), table.getGameState(), table.getPlayersList());
+    }
+
+    public EventMessage broadcastJoinedTable(String username) {
+        return EventMessage.fromWordsEvent(WordsEvent.PLAYER_JOINED_TABLE, username);
+    }
+
+    public boolean leaveTable(String username) {
+        int tableNumber = getPlayersTableNumber(username);
+        WordsBattlesGame table = gameTables.get(tableNumber);
+        if (!table.hasPlayer(username)) {
+            return false;
+        }
+        table.removePlayer(username);
+        playersOnTables.remove(username);
+        return true;
+    }
+
+    public EventMessage broadcastLeftTable(String username) {
+        return EventMessage.fromWordsEvent(WordsEvent.PLAYER_LEFT_TABLE, username);
     }
 }

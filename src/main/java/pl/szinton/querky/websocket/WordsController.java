@@ -17,17 +17,32 @@ import java.util.List;
 @Slf4j // TODO: remove
 public class WordsController {
 
-    private final WordsService wordsService;
-    private final SimpMessagingTemplate messagingTemplate;
+    protected static final String DATA_INT_PARSE_EXCEPTION_MESSAGE =
+            "Failed to parse WebSockets message content - first argument must by a number.";
+
+    protected final WordsService wordsService;
+    protected final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/words/join-table")
-    public void handleJoinTable(@Header("simpSessionId") String sessionId, List<String> dataMsg) {
+    public void handleJoinedTable(@Header("simpSessionId") String sessionId, List<String> dataMsg) {
         String username = "" + sessionId; // TODO: fetch from user
-        int tableNumber = StringParsingUtils.toInt(dataMsg.get(0),
-                "Failed to parse WebSockets message content - first argument must by a number.");
+        int tableNumber = StringParsingUtils.toInt(dataMsg.get(0), DATA_INT_PARSE_EXCEPTION_MESSAGE);
         EventMessage response = wordsService.joinTable(username, tableNumber);
-        if (response.isValid()) {
-            messagingTemplate.convertAndSend("/queue/direct-" + sessionId, response);
+        messagingTemplate.convertAndSend("/queue/direct-" + username, response);
+        if (!response.isError()) {
+            EventMessage broadcast = wordsService.broadcastJoinedTable(username);
+            messagingTemplate.convertAndSend("/topic/table-" + tableNumber, broadcast);
+        }
+    }
+
+    @MessageMapping("/words/leave-table")
+    public void handleLeftTable(@Header("simpSessionId") String sessionId) {
+        String username = "" + sessionId; // TODO: fetch from user
+        int tableNumber = wordsService.getPlayersTableNumber(username);
+        boolean success = wordsService.leaveTable(username);
+        if (success) {
+            EventMessage broadcast = wordsService.broadcastLeftTable(username);
+            messagingTemplate.convertAndSend("/topic/table-" + tableNumber, broadcast);
         }
     }
 }
