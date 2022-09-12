@@ -127,13 +127,19 @@ let BattlesGamePresenter = new function() {
 	let fetchPlayers = function(players) {
 		let fetchedPlayers = [];
 		for (let player of players) {
+			let letterMatches = [];
+			for (let matchObj of player.letterMatches) {
+				letterMatches.push(matchObj.matches);
+			}
 			let fetchedPlayer = {
 				"nickname": player.username,
 				"isPlaying": player.isPlaying,
-				"points": player.points
+				"points": player.points,
+				"letterMatches": letterMatches
 			};
 			fetchedPlayers.push(fetchedPlayer);
 		}
+		console.log(fetchedPlayers);
 		return fetchedPlayers;
 	};
 }

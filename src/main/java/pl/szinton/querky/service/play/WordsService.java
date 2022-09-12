@@ -2,8 +2,9 @@ package pl.szinton.querky.service.play;
 
 import org.springframework.stereotype.Service;
 import pl.szinton.querky.enums.WordsEvent;
-import pl.szinton.querky.game.WordsBattlesGame;
+import pl.szinton.querky.game.words.BattlesGame;
 import pl.szinton.querky.message.EventMessage;
+import pl.szinton.querky.service.rest.WordsDictionaryService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +15,13 @@ public class WordsService {
     protected static final int TABLES_COUNT = 1;
 
     protected final Map<String, Integer> playersOnTables;
-    protected final Map<Integer, WordsBattlesGame> gameTables;
+    protected final Map<Integer, BattlesGame> gameTables;
 
-    public WordsService() {
+    public WordsService(WordsDictionaryService dictionaryService) {
         this.playersOnTables = new HashMap<>();
         this.gameTables = new HashMap<>();
         for (int i = 0; i < TABLES_COUNT; i++) {
-            WordsBattlesGame newGame = new WordsBattlesGame();
+            BattlesGame newGame = new BattlesGame(dictionaryService);
             this.gameTables.put(100 + i, newGame);
         }
     }
@@ -33,7 +34,7 @@ public class WordsService {
         if (!gameTables.containsKey(tableNumber)) {
             return EventMessage.fromWordsEvent(WordsEvent.ERROR_NO_SUCH_TABLE);
         }
-        WordsBattlesGame table = gameTables.get(tableNumber);
+        BattlesGame table = gameTables.get(tableNumber);
         if (table.hasPlayer(username)) {
             return EventMessage.fromWordsEvent(WordsEvent.ERROR_PLAYER_ALREADY_ON_TABLE);
         }
@@ -52,7 +53,7 @@ public class WordsService {
 
     public boolean leaveTable(String username) {
         int tableNumber = getPlayersTableNumber(username);
-        WordsBattlesGame table = gameTables.get(tableNumber);
+        BattlesGame table = gameTables.get(tableNumber);
         if (!table.hasPlayer(username)) {
             return false;
         }

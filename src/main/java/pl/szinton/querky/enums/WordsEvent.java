@@ -1,11 +1,15 @@
 package pl.szinton.querky.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
+@AllArgsConstructor
+@RequiredArgsConstructor
 public enum WordsEvent {
     TABLE_DATA(101),
     PLAYER_JOINED_TABLE(102),
@@ -20,17 +24,7 @@ public enum WordsEvent {
     ERROR_TABLE_FULL(913, "The table has reached players limit.");
 
     private final int code;
-    private final String errorMessage;
-
-    WordsEvent(int code) {
-        this.code = code;
-        this.errorMessage = null;
-    }
-
-    WordsEvent(int code, String errorMessage) {
-        this.code = code;
-        this.errorMessage = errorMessage;
-    }
+    private String errorMessage;
 
     private static final Map<Integer, WordsEvent> codeLookupMap;
 
