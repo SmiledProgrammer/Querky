@@ -14,20 +14,43 @@ class Player {
     private boolean isPlaying;
     private int points;
     private final List<LetterMatch> letterMatches;
+    private boolean hasGuessedCorrectly;
 
     public Player(String username) {
         this.username = username;
         this.isPlaying = false;
         this.points = 0;
         this.letterMatches = new ArrayList<>();
+        this.hasGuessedCorrectly = false;
+    }
+
+    public void processPoints(int guessPlace) {
+        if (guessPlace == -1) {
+            return;
+        }
+        int guessTries = letterMatches.size();
+        int basePoints = 0;
+        if (guessTries <= GUESS_COUNT - 2) {
+            basePoints = 100;
+        } else if (guessTries <= GUESS_COUNT - 1) {
+            basePoints = 80;
+        } else if (guessTries == GUESS_COUNT) {
+            basePoints = 40;
+        }
+        float multiplier = guessPlace * 0.25f;
+        int points = (int) (basePoints * multiplier);
+        this.points += points;
+    }
+
+    public void makeGuess(LetterMatch match, boolean correct) {
+        if (letterMatches.size() < GUESS_COUNT) {
+            letterMatches.add(match);
+            hasGuessedCorrectly = correct;
+        }
     }
 
     public void setIsPlaying(boolean isPlaying) {
         this.isPlaying = isPlaying;
-    }
-
-    public void addPoints(int pointsGain) {
-        this.points += pointsGain;
     }
 
     public void resetPoints() {
@@ -36,11 +59,14 @@ class Player {
 
     public void resetLetterMatches() {
         letterMatches.clear();
+        hasGuessedCorrectly = false;
     }
 
-    public void makeGuess(LetterMatch match) {
-        if (this.letterMatches.size() < GUESS_COUNT) {
-            letterMatches.add(match);
-        }
+    public boolean hasGuessedCorrectly() {
+        return hasGuessedCorrectly;
+    }
+
+    public boolean hasGuessesLeft() {
+        return letterMatches.size() < GUESS_COUNT;
     }
 }

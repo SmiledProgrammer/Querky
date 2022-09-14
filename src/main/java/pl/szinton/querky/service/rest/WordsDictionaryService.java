@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class WordsDictionaryService {
 
-    public boolean containsGuessEntryWord(String guessEntryWord) {
-        throw new UnsupportedOperationException(); // TODO
+    public boolean doesNotContainWord(String guessEntryWord) {
+        return false; // TODO
     }
 
     public String getRandomWord() {

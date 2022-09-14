@@ -55,6 +55,7 @@ let BattlesGamePresenter = new function() {
 		BattlesClient.handleRoundGuessingPhaseStart = this.handleRoundGuessingPhaseStart;
 		BattlesClient.handleRoundEnd = this.handleRoundEnd;
 		BattlesClient.handlePlayerGuess = this.handlePlayerGuess;
+		BattlesClient.handleDisallowedWordError = this.handleDisallowedWordError;
 	};
 
 	this.joinTable = function(tableNumber) {
@@ -83,6 +84,7 @@ let BattlesGamePresenter = new function() {
 		if (m_players.size >= 2) {
 			startGameStartCountdown();
 		}
+		// TODO: load actual game state in any moment of the game
 	};
 
 	this.handlePlayerJoinedTable = function(nickname) {
@@ -143,10 +145,14 @@ let BattlesGamePresenter = new function() {
 		}
 	};
 
-	this.handlePlayerGuess = function(nickname, hitList) {
+	this.handlePlayerGuess = function(nickname, matchList) {
+		m_players.get(nickname).letterMatches.push(matchList.matches);
+	};
+
+	this.handleDisallowedWordError = function() {
 		// TODO
 	};
-	
+
 	let startGame = function() {
 		m_gameState = GameStates.RoundStartCountdown;
 		for (let nickname of m_players.keys()) {
@@ -219,7 +225,7 @@ let BattlesGamePresenter = new function() {
 		for (let player of players) {
 			let letterMatches = [];
 			for (let matchObj of player.letterMatches) {
-				letterMatches.push(matchObj.matches);
+				letterMatches.push(matchObj.matches); // TODO: fix (probably wrong)
 			}
 			let fetchedPlayer = {
 				"isPlaying": player.isPlaying,

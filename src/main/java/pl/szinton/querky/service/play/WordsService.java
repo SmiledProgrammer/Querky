@@ -2,7 +2,9 @@ package pl.szinton.querky.service.play;
 
 import org.springframework.stereotype.Service;
 import pl.szinton.querky.enums.WordsEvent;
+import pl.szinton.querky.enums.WordsGameState;
 import pl.szinton.querky.game.words.BattlesGame;
+import pl.szinton.querky.game.words.LetterMatch;
 import pl.szinton.querky.message.EventMessage;
 import pl.szinton.querky.service.rest.WordsDictionaryService;
 import pl.szinton.querky.websocket.WordsOutputController;
@@ -16,11 +18,13 @@ public class WordsService {
     protected static final int TABLES_COUNT = 1;
 
     protected final WordsOutputController outputController;
+    protected final WordsDictionaryService dictionaryService;
     protected final Map<String, Integer> playersOnTables;
     protected final Map<Integer, BattlesGame> gameTables;
 
     public WordsService(WordsOutputController outputController, WordsDictionaryService dictionaryService) {
         this.outputController = outputController;
+        this.dictionaryService = dictionaryService;
         this.playersOnTables = new HashMap<>();
         this.gameTables = new HashMap<>();
         BattlesGame.initServices(this, dictionaryService);
@@ -31,7 +35,7 @@ public class WordsService {
         }
     }
 
-    public int getPlayersTableNumber(String username) {
+    public Integer getPlayersTableNumber(String username) {
         return playersOnTables.get(username);
     }
 
@@ -52,23 +56,47 @@ public class WordsService {
                 table.getRoundsLeft(), table.getRoundTimeLeft(), table.getGameState(), table.getPlayersList());
     }
 
-    public boolean leaveTable(String username) {
-        int tableNumber = getPlayersTableNumber(username);
-        BattlesGame table = gameTables.get(tableNumber);
-        if (!table.hasPlayer(username)) {
-            return false;
+    public EventMessage leaveTable(String username) {
+        Integer tableNumber = getPlayersTableNumber(username);
+        if (tableNumber == null) {
+            return EventMessage.fromWordsEvent(WordsEvent.ERROR_PLAYER_NOT_ON_TABLE);
         }
+        BattlesGame table = gameTables.get(tableNumber);
         table.removePlayer(username);
         playersOnTables.remove(username);
-        return true;
+        return EventMessage.fromWordsEvent(WordsEvent.PLAYER_LEFT_TABLE, username);
+    }
+
+    public EventMessage makeGuess(String username, String guessWord) {
+        // TODO: add check for not guessing phase
+        if (dictionaryService.doesNotContainWord(guessWord)) {
+            return EventMessage.fromWordsEvent(WordsEvent.ERROR_DISALLOWED_WORD);
+        }
+        Integer tableNumber = getPlayersTableNumber(username);
+        if (tableNumber == null) {
+            return EventMessage.fromWordsEvent(WordsEvent.ERROR_PLAYER_NOT_ON_TABLE);
+        }
+        BattlesGame game = gameTables.get(tableNumber);
+        if (game.getGameState() != WordsGameState.GUESSING_PHASE) {
+            return EventMessage.fromWordsEvent(WordsEvent.ERROR_NOT_GUESSING_PHASE);
+        }
+        if (game.playerDoesNotHaveGuessesLeft(username)) {
+            return EventMessage.fromWordsEvent(WordsEvent.ERROR_PLAYER_HAS_NO_GUESSES_LEFT);
+        }
+        if (game.playerHasAlreadyGuessedCurrentWord(username)) {
+            return EventMessage.fromWordsEvent(WordsEvent.ERROR_PLAYER_HAS_ALREADY_GUESSED);
+        }
+        LetterMatch match = game.processPlayerGuess(username, guessWord);
+        return EventMessage.fromWordsEvent(WordsEvent.PLAYER_GUESS, username, match);
+    }
+
+    public void checkIfAllPlayersOnTableFinished(int tableNumber) {
+        BattlesGame game = gameTables.get(tableNumber);
+        game.checkIfAllPlayersFinished();
     }
 
     public EventMessage broadcastJoinedTable(String username) {
         return EventMessage.fromWordsEvent(WordsEvent.PLAYER_JOINED_TABLE, username);
-    }
-
-    public EventMessage broadcastLeftTable(String username) {
-        return EventMessage.fromWordsEvent(WordsEvent.PLAYER_LEFT_TABLE, username);
     }
 
     public void handleRoundStart(int tableNumber) {

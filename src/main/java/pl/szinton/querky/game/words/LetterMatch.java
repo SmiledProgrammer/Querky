@@ -1,6 +1,7 @@
 package pl.szinton.querky.game.words;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 import pl.szinton.querky.enums.WordsLetterMatch;
 import pl.szinton.querky.utils.ListUtils;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 import static pl.szinton.querky.game.words.Constants.WORD_LENGTH;
 
+@Getter
 @ToString
 @EqualsAndHashCode
 public class LetterMatch {
@@ -29,7 +31,7 @@ public class LetterMatch {
         this.matches = wordLetterMatchesCodes;
     }
 
-    public static LetterMatch createFromWordsMatching(String targetWord, String guessedWord) {
+    public static LetterMatch checkWordMatching(String targetWord, String guessedWord) {
         WordsLetterMatch[] matches = new WordsLetterMatch[WORD_LENGTH];
         List<Character> charsLeftToProcess = targetWord.chars()
                 .mapToObj(c -> (char) c).collect(Collectors.toCollection(ArrayList::new));
@@ -58,7 +60,14 @@ public class LetterMatch {
         return new LetterMatch(matches);
     }
 
-    public int[] getMatches() {
-        return matches;
+    public static boolean isPerfectMatch(LetterMatch letterMatch) {
+        int[] matches = letterMatch.matches;
+        int correctCode = WordsLetterMatch.LETTER_CORRECT.getCode();
+        for (int i = 0; i < WORD_LENGTH; i++) {
+            if (matches[i] != correctCode) {
+                return false;
+            }
+        }
+        return true;
     }
 }

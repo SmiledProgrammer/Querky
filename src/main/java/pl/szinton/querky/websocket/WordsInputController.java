@@ -37,11 +37,26 @@ public class WordsInputController {
     @MessageMapping("/words/leave-table")
     public void handleLeftTable(@Header("simpSessionId") String sessionId) {
         String username = "" + sessionId; // TODO: fetch from user
-        int tableNumber = wordsService.getPlayersTableNumber(username);
-        boolean success = wordsService.leaveTable(username);
-        if (success) {
-            EventMessage broadcast = wordsService.broadcastLeftTable(username);
-            outputController.broadcastTableMessage(tableNumber, broadcast);
+        EventMessage msg = wordsService.leaveTable(username);
+        if (msg.isError()) {
+            outputController.sendDirectMessage(username, msg);
+            return;
         }
+        int tableNumber = wordsService.getPlayersTableNumber(username);
+        outputController.broadcastTableMessage(tableNumber, msg);
+    }
+
+    @MessageMapping("/words/guess")
+    public void handlePlayerGuess(@Header("simpSessionId") String sessionId, List<String> dataMsg) {
+        String username = "" + sessionId; // TODO: fetch from user
+        String guessWord = dataMsg.get(0);
+        EventMessage msg = wordsService.makeGuess(username, guessWord);
+        if (msg.isError()) {
+            outputController.sendDirectMessage(username, msg);
+            return;
+        }
+        int tableNumber = wordsService.getPlayersTableNumber(username);
+        outputController.broadcastTableMessage(tableNumber, msg);
+        wordsService.checkIfAllPlayersOnTableFinished(tableNumber);
     }
 }

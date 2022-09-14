@@ -29,7 +29,7 @@ class LetterMatchTest {
     @ParameterizedTest
     @MethodSource("matchingLettersCases")
     public void createFromWordsMatching_testDifferentMatchingCases(String targetWord, String guessedWord, int[] matches) {
-        LetterMatch actualMatches = LetterMatch.createFromWordsMatching(targetWord, guessedWord);
+        LetterMatch actualMatches = LetterMatch.checkWordMatching(targetWord, guessedWord);
         LetterMatch expectedMatches = new LetterMatch(matches);
         assertEquals(expectedMatches, actualMatches);
     }

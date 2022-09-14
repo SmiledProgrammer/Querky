@@ -18,8 +18,8 @@ import static pl.szinton.querky.game.words.Constants.*;
 @Getter
 public class BattlesGame {
 
-    private static WordsService wordsService;
-    private static WordsDictionaryService dictionaryService;
+    protected static WordsService wordsService;
+    protected static WordsDictionaryService dictionaryService;
 
     protected final int tableNumber;
     protected WordsGameState gameState;
@@ -28,6 +28,7 @@ public class BattlesGame {
     protected int roundsLeft;
     protected int roundTimeLeft;
     protected final Map<String, Player> players;
+    protected final List<String> orderOfCorrectGuesses;
 
     public BattlesGame(int tableNumber) {
         this.tableNumber = tableNumber;
@@ -37,6 +38,7 @@ public class BattlesGame {
         this.roundsLeft = ROUND_COUNT;
         this.roundTimeLeft = ROUND_START_COUNTDOWN_DURATION + ROUND_DURATION;
         this.players = new HashMap<>();
+        this.orderOfCorrectGuesses = new ArrayList<>();
     }
 
     public static void initServices(WordsService wordsService, WordsDictionaryService dictionaryService) {
@@ -100,14 +102,49 @@ public class BattlesGame {
         log.info("Ended round.");
         gameState = WordsGameState.ROUND_ENDING;
         roundsLeft -= 1;
+        orderOfCorrectGuesses.clear();
         for (Player player : players.values()) {
-//            player.processPoints(); // TODO
+            int guessPlace = orderOfCorrectGuesses.indexOf(player.getUsername());
+            player.processPoints(guessPlace);
             player.resetLetterMatches();
         }
         Map<String, Integer> playerPoints = players.values().stream()
                 .collect(Collectors.toMap(Player::getUsername, Player::getPoints));
         wordsService.handleRoundEnd(tableNumber, playerPoints);
         startRoundCountdown();
+    }
+
+    public synchronized LetterMatch processPlayerGuess(String username, String guessWord) {
+        if (dictionaryService.doesNotContainWord(guessWord)) {
+            return null;
+        }
+        Player player = players.get(username);
+        if (player.hasGuessedCorrectly() || !player.hasGuessesLeft()) {
+            return null;
+        }
+        LetterMatch match = LetterMatch.checkWordMatching(currentWord, guessWord);
+        boolean correctGuess = LetterMatch.isPerfectMatch(match);
+        player.makeGuess(match, correctGuess);
+        if (correctGuess) {
+            orderOfCorrectGuesses.add(username);
+        }
+        // TODO: shorten round time left
+        return match;
+    }
+
+    public synchronized void checkIfAllPlayersFinished() {
+        boolean allFinished = true;
+        if (orderOfCorrectGuesses.size() != players.size()) {
+            for (Player player : players.values()) {
+                if (player.hasGuessesLeft()) {
+                    allFinished = false;
+                    break;
+                }
+            }
+        }
+        if (allFinished) {
+            endRound();
+        }
     }
 
     private synchronized void endGame() {
@@ -161,7 +198,11 @@ public class BattlesGame {
         return players.size() == PLAYERS_LIMIT;
     }
 
-    public boolean isAllowedWord(String guessedWord) {
-        return dictionaryService.containsGuessEntryWord(guessedWord);
+    public boolean playerDoesNotHaveGuessesLeft(String username) {
+        return !players.get(username).hasGuessesLeft();
+    }
+
+    public boolean playerHasAlreadyGuessedCurrentWord(String username) {
+        return players.get(username).hasGuessedCorrectly();
     }
 }

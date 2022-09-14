@@ -22,7 +22,12 @@ public enum WordsEvent {
 
     ERROR_NO_SUCH_TABLE(911, "There is no table with this number."),
     ERROR_PLAYER_ALREADY_ON_TABLE(912, "The player is already sitting at this table."),
-    ERROR_TABLE_FULL(913, "The table has reached players limit.");
+    ERROR_TABLE_FULL(913, "The table has reached players limit."),
+    ERROR_PLAYER_NOT_ON_TABLE(921, "The player is not sitting at this table."),
+    ERROR_DISALLOWED_WORD(922, "The typed word is invalid."),
+    ERROR_PLAYER_HAS_NO_GUESSES_LEFT(923, "The player has no word guesses left in this round."),
+    ERROR_PLAYER_HAS_ALREADY_GUESSED(924, "The player has already guessed the word correctly in this round."),
+    ERROR_NOT_GUESSING_PHASE(925, "Can only submit guesses during guessing phase.");
 
     private final int code;
     private String errorMessage;

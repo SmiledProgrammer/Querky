@@ -23,6 +23,9 @@ let BattlesClient = new function() {
 		let msg = BattlesClient.convertRawJson(rawMsg);
 		if (msg.error === true) {
 			console.error("Received error message: " + msg.d[0]);
+			if (msg.c === 922) {
+				receiveDisallowedWordError();
+			}
 			return;
 		}
 		switch (msg.c) {
@@ -65,7 +68,7 @@ let BattlesClient = new function() {
 	};
 
 	this.sendGuess = function(wordGuess) {
-		m_stompClient.send("/app/words/guess", {}, "[" + wordGuess + "]");
+		m_stompClient.send("/app/words/guess", {}, "[\"" + wordGuess + "\"]");
 	};
 
 	let receiveJoinedTableData = function(tableNumber, gameStartTime, roundsLeft, roundTime, gameState, players) {
@@ -102,8 +105,12 @@ let BattlesClient = new function() {
 		BattlesClient.handleRoundEnd(pointsList);
 	};
 
-	let receivePlayerGuess = function(nickname, hitList) {
-		BattlesClient.handlePlayerGuess(nickname, hitList);
+	let receivePlayerGuess = function(nickname, matchList) {
+		BattlesClient.handlePlayerGuess(nickname, matchList);
+	};
+
+	let receiveDisallowedWordError = function() {
+		BattlesClient.handleDisallowedWordError();
 	};
 
 	this.handleJoinedTableData = function() {
@@ -137,4 +144,8 @@ let BattlesClient = new function() {
 	this.handlePlayerGuess = function() {
 		throw new Error("This function must be overridden.");
 	};
+
+	this.handleDisallowedWordError = function() {
+		throw new Error("This function must be overridden.");
+	}
 }
