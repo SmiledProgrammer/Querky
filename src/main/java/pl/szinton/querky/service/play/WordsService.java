@@ -68,7 +68,6 @@ public class WordsService {
     }
 
     public EventMessage makeGuess(String username, String guessWord) {
-        // TODO: add check for not guessing phase
         if (dictionaryService.doesNotContainWord(guessWord)) {
             return EventMessage.fromWordsEvent(WordsEvent.ERROR_DISALLOWED_WORD);
         }
