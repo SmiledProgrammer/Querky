@@ -80,6 +80,9 @@ let BattlesGamePresenter = new function() {
 		m_roundTimeLeft = roundTime;
 		m_gameState = parseGameState(gameState);
 		m_players = fetchPlayers(players);
+		if (m_players.size >= 2) {
+			startGameStartCountdown();
+		}
 	};
 
 	this.handlePlayerJoinedTable = function(nickname) {
@@ -134,9 +137,8 @@ let BattlesGamePresenter = new function() {
 	this.handleRoundEnd = function(pointsList) {
 		m_gameState = GameStates.RoundEnding;
 		m_roundsLeft -= 1;
-		for (let pointsObj of pointsList) {
-			let nickname = pointsObj.username;
-			m_players.get(nickname).points = pointsObj.points;
+		for (let nickname in pointsList) {
+			m_players.get(nickname).points = pointsList[nickname];
 			m_players.get(nickname).letterMatches = [];
 		}
 	};
@@ -182,6 +184,7 @@ let BattlesGamePresenter = new function() {
 	};
 
 	let startTimer = function() {
+		stopTimer();
 		m_timerId = setInterval(handleTimerTick, 1000);
 	};
 
