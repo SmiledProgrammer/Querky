@@ -1,7 +1,6 @@
 package pl.szinton.querky.websocket;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,12 +13,12 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@Slf4j // TODO: remove
-public class WordsController {
+public class WordsInputController {
 
     protected static final String DATA_INT_PARSE_EXCEPTION_MESSAGE =
             "Failed to parse WebSockets message content - first argument must by a number.";
 
+    protected final WordsOutputController outputController;
     protected final WordsService wordsService;
     protected final SimpMessagingTemplate messagingTemplate;
 
@@ -28,10 +27,10 @@ public class WordsController {
         String username = "" + sessionId; // TODO: fetch from user
         int tableNumber = StringParsingUtils.toInt(dataMsg.get(0), DATA_INT_PARSE_EXCEPTION_MESSAGE);
         EventMessage response = wordsService.joinTable(username, tableNumber);
-        messagingTemplate.convertAndSend("/queue/direct-" + username, response);
+        outputController.sendDirectMessage(username, response);
         if (!response.isError()) {
             EventMessage broadcast = wordsService.broadcastJoinedTable(username);
-            messagingTemplate.convertAndSend("/topic/table-" + tableNumber, broadcast);
+            outputController.broadcastTableMessage(tableNumber, broadcast);
         }
     }
 
@@ -42,7 +41,7 @@ public class WordsController {
         boolean success = wordsService.leaveTable(username);
         if (success) {
             EventMessage broadcast = wordsService.broadcastLeftTable(username);
-            messagingTemplate.convertAndSend("/topic/table-" + tableNumber, broadcast);
+            outputController.broadcastTableMessage(tableNumber, broadcast);
         }
     }
 }

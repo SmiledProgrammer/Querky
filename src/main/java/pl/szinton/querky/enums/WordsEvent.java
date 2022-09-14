@@ -15,9 +15,10 @@ public enum WordsEvent {
     PLAYER_JOINED_TABLE(102),
     PLAYER_LEFT_TABLE(103),
     PLAYER_READY(105),
-    GAME_START(111),
+    ROUND_COUNTDOWN_START(211),
+    ROUND_GUESSING_PHASE_START(212),
+    ROUND_END(213),
     PLAYER_GUESS(221),
-    ROUND_END(222),
 
     ERROR_NO_SUCH_TABLE(911, "There is no table with this number."),
     ERROR_PLAYER_ALREADY_ON_TABLE(912, "The player is already sitting at this table."),

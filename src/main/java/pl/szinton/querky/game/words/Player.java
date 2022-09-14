@@ -1,7 +1,6 @@
 package pl.szinton.querky.game.words;
 
 import lombok.Getter;
-import pl.szinton.querky.enums.WordsLetterMatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +30,16 @@ class Player {
         this.points += pointsGain;
     }
 
-    public void makeGuess(WordsLetterMatch[] wordLetterMatches) {
+    public void resetPoints() {
+        points = 0;
+    }
+
+    public void resetLetterMatches() {
+        letterMatches.clear();
+    }
+
+    public void makeGuess(LetterMatch match) {
         if (this.letterMatches.size() < GUESS_COUNT) {
-            LetterMatch match = new LetterMatch(wordLetterMatches);
             letterMatches.add(match);
         }
     }

@@ -21,14 +21,19 @@ let BattlesClient = new function() {
 
 	this.handleReceiveMessage = function(rawMsg) {
 		let msg = BattlesClient.convertRawJson(rawMsg);
+		if (msg.error === true) {
+			console.error("Received error message: " + msg.d[0]);
+			return;
+		}
 		switch (msg.c) {
 			case 101: receiveJoinedTableData(msg.d[0], msg.d[1], msg.d[2], msg.d[3], msg.d[4], msg.d[5]); break;
 			case 102: receivePlayerJoinedTable(msg.d[0]); break;
 			case 103: receivePlayerLeftTable(msg.d[0]); break;
 			case 105: receivePlayerReady(msg.d[0]); break;
-			case 111: receiveGameStart(); break;
+			case 211: receiveRoundCountdownStart(); break;
+			case 212: receiveRoundGuessingPhaseStart(); break;
+			case 213: receiveRoundEnd(msg.d[0]); break;
 			case 221: receivePlayerGuess(msg.d[0], msg.d[1]); break;
-			case 222: receiveRoundEnd(msg.d[0]); break;
 			default: console.error("Unknown websockets message type.");
 		}
 	};
@@ -82,19 +87,23 @@ let BattlesClient = new function() {
 	};
 
 	let receivePlayerReady = function(nickname, ready) {
-
+		BattlesClient.handlePlayerReady(nickname, ready);
 	};
 
-	let receiveGameStart = function() {
-
+	let receiveRoundCountdownStart = function() {
+		BattlesClient.handleRoundCountdownStart();
 	};
 
-	let receivePlayerGuess = function(nickname, hitList) {
-
+	let receiveRoundGuessingPhaseStart = function() {
+		BattlesClient.handleRoundGuessingPhaseStart();
 	};
 
 	let receiveRoundEnd = function(pointsList) {
+		BattlesClient.handleRoundEnd(pointsList);
+	};
 
+	let receivePlayerGuess = function(nickname, hitList) {
+		BattlesClient.handlePlayerGuess(nickname, hitList);
 	};
 
 	this.handleJoinedTableData = function() {
@@ -113,15 +122,19 @@ let BattlesClient = new function() {
 		throw new Error("This function must be overridden.");
 	};
 
-	this.handleGameStart = function() {
+	this.handleRoundCountdownStart = function() {
 		throw new Error("This function must be overridden.");
 	};
 
-	this.handlePlayerGuess = function() {
+	this.handleRoundGuessingPhaseStart = function() {
 		throw new Error("This function must be overridden.");
 	};
 
 	this.handleRoundEnd = function() {
+		throw new Error("This function must be overridden.");
+	};
+
+	this.handlePlayerGuess = function() {
 		throw new Error("This function must be overridden.");
 	};
 }

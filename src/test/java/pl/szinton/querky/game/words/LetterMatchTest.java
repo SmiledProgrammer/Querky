@@ -1,35 +1,14 @@
 package pl.szinton.querky.game.words;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
-import pl.szinton.querky.service.rest.WordsDictionaryService;
 
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BattlesGameTest {
-
-    private static WordsDictionaryService dictionaryService;
-    private static BattlesGame game;
-
-    @BeforeAll
-    static void init() {
-        dictionaryService = Mockito.mock(WordsDictionaryService.class);
-    }
-
-    @BeforeEach
-    void prepareForTest() {
-        game = new BattlesGame(dictionaryService);
-    }
-
-    private void setCurrentWordMock(String word) {
-        Mockito.when(dictionaryService.getRandomWord()).thenReturn(word);
-    }
+class LetterMatchTest {
 
     private static Stream<Arguments> matchingLettersCases() {
         return Stream.of(
@@ -49,12 +28,8 @@ class BattlesGameTest {
 
     @ParameterizedTest
     @MethodSource("matchingLettersCases")
-    public void checkMatchingLetters_testDifferentMatchingCases(String currentWord, String guessedWord, int[] matches) {
-        setCurrentWordMock(currentWord);
-        game.startNextRound();
-
-        LetterMatch actualMatches = game.checkMatchingLetters(guessedWord);
-
+    public void createFromWordsMatching_testDifferentMatchingCases(String targetWord, String guessedWord, int[] matches) {
+        LetterMatch actualMatches = LetterMatch.createFromWordsMatching(targetWord, guessedWord);
         LetterMatch expectedMatches = new LetterMatch(matches);
         assertEquals(expectedMatches, actualMatches);
     }

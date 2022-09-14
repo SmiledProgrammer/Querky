@@ -8,10 +8,11 @@ import java.util.List;
 public record EventMessage(int c, List<Object> d) {
 
     public static EventMessage fromWordsEvent(WordsEvent event, Object... dataObjects) {
-        if (event.isError()) {
-            return EventMessage.fromWordsEvent(event, event.getErrorMessage());
-        }
         int code = event.getCode();
+        if (event.isError()) {
+            List<Object> data = List.of(event.getErrorMessage());
+            return new EventMessage(code, data);
+        }
         List<Object> data = Arrays.asList(dataObjects);
         return new EventMessage(code, data);
     }

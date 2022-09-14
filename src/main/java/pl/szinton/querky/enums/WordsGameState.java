@@ -2,9 +2,8 @@ package pl.szinton.querky.enums;
 
 public enum WordsGameState {
     WAITING_FOR_PLAYERS,
-    GAME_STARTING,
-    ROUND_STARTING,
-    GUESSING,
-    ROUND_ENDING,
-    GAME_ENDING
+    GAME_START_COUNTDOWN,
+    ROUND_START_COUNTDOWN,
+    GUESSING_PHASE,
+    ROUND_ENDING
 }
