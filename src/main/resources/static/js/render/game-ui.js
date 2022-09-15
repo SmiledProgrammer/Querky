@@ -40,7 +40,7 @@ let GameUI = new function() {
 	this.createOpponentBoards = function() {
 		let opponentsColumn = document.getElementsByClassName("opponentBoards");
 		for (let col of opponentsColumn) {
-			for (let i = 0; i < PLAYERS_COUNT - 1; i++) {
+			for (let i = 1; i < PLAYERS_COUNT; i++) {
 				let idStr = i.toString();
 				
 				let boardDiv = document.createElement("div");
@@ -69,8 +69,6 @@ let GameUI = new function() {
 			usernameSpan.setAttribute("class", "playerUsername opponentUsername");
 			scoreSpan.setAttribute("class", "playerScore opponentScore");
 		}
-		usernameSpan.textContent = "paprykarzkielecki@onet.pl"; // tmp
-		scoreSpan.textContent = "- 450 -"; // tmp
 		baseDiv.appendChild(usernameSpan);
 		baseDiv.appendChild(scoreSpan);
 	};
@@ -95,6 +93,12 @@ let GameUI = new function() {
 				wordTableBody.appendChild(tableRow);
 			}
 			board.appendChild(wordTable);
+
+			let overlayDiv = document.createElement("div");
+			let overlayId = boardId + "-" + "overlay";
+			overlayDiv.setAttribute("id", overlayId);
+			overlayDiv.setAttribute("class", "overlay");
+			// board.appendChild(overlayDiv); // TODO: fix styling
 		}
 	};
 }

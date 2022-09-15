@@ -27,7 +27,6 @@ let GameView = new function() {
 	let altPressed = false;
 
 	this.enterGuess = function(guess) {
-		// Message format: array of numbers (0 - not in word, 1 - misplaced, 2 - correct) [if array empty => invalid word]
 		let json = [];
 		for (let i = 0; i < 6; i++) {
 			json.push(Math.floor(Math.random() * 3));
@@ -59,25 +58,22 @@ let GameView = new function() {
 	};
 
 	this.inputLetter = function(letter) {
-		if (this.activeRow < TRIES_COUNT) {
+		if (this.canInputLetters === true && this.activeRow < TRIES_COUNT) {
 			let guessLen = this.activeWord.length;
 			if (letter === "<") {
 				let letterCell = getLetterCell("activePlayer", this.activeRow, guessLen - 1);
 				letterCell.textContent = "";
-				
 				this.activeWord = this.activeWord.slice(0, -1);
 				// TODO: clear invalid word styling
 			} else {
 				let letterCell = getLetterCell("activePlayer", this.activeRow, guessLen);
 				letterCell.textContent = letter;
-				
 				this.activeWord += letter;
 				if (this.activeWord.length === WORD_LENGTH) {
 					this.enterGuess(this.activeWord);
 				}
 			}
 		}
-		//console.log(letter); // tmp
 	};
 	
 	this.handleKeyboardKeyDown = function(keyCode) {

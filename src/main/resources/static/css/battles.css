@@ -72,7 +72,7 @@ div.opponentBoard td {
   height: 2rem;
   text-align: center;
   /*border-bottom: .1rem;
-  border-color: black;*/
+  border-color: black; TODO */
 }
 
 .gameInfoBar > * {

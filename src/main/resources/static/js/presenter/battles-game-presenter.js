@@ -46,6 +46,7 @@ let BattlesGamePresenter = new function() {
 
 	this.init = function() {
 		resetGameState();
+		BattlesView.init();
 		BattlesClient.init();
 		BattlesClient.handleJoinedTableData = this.handleJoinedTableData;
 		BattlesClient.handlePlayerJoinedTable = this.handlePlayerJoinedTable;
@@ -85,6 +86,10 @@ let BattlesGamePresenter = new function() {
 			startGameStartCountdown();
 		}
 		// TODO: load actual game state in any moment of the game
+		let activeUsername = BattlesClient.getClientNickname();
+		let roundNumber = ROUND_COUNT - m_roundsLeft + 1;
+		BattlesView.updateViewOnJoinTableData(activeUsername, m_tableNumber, m_gameStartTimeLeft,
+												roundNumber, m_roundTimeLeft, m_players);
 	};
 
 	this.handlePlayerJoinedTable = function(nickname) {
@@ -98,6 +103,7 @@ let BattlesGamePresenter = new function() {
 			if (m_players.size >= 2) {
 				startGameStartCountdown();
 			}
+			BattlesView.updateViewOnPlayerJoinedTable(nickname);
 		}
 	};
 
@@ -114,6 +120,7 @@ let BattlesGamePresenter = new function() {
 				}
 			}
 		}
+		BattlesView.updateViewOnPlayerLeftTable(nickname);
 	};
 
 	this.handlePlayerReady = function(nickname, ready) {
