@@ -8,10 +8,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+@Profile("!test")
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Profile("!test")
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationSuccessHandler successHandler;
@@ -21,9 +21,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .oauth2Login()
-                .successHandler(successHandler);
+                .anyRequest().permitAll(); // TODO: remove and uncomment below
+//                .anyRequest().authenticated()
+//                .and()
+//                .oauth2Login()
+//                .successHandler(successHandler);
     }
 }

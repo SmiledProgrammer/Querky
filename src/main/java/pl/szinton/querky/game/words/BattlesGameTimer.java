@@ -10,7 +10,7 @@ import pl.szinton.querky.service.play.WordsService;
 @RequiredArgsConstructor
 public class BattlesGameTimer {
 
-    public final WordsService wordsService;
+    private final WordsService wordsService;
 
     @Async
     @Scheduled(fixedRate = 1000)
