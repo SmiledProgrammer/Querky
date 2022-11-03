@@ -26,12 +26,10 @@ let BattlesView = new function() {
         let playerUsernames = Array.from(players.keys());
         let activePlayerIndex = playerUsernames.indexOf(activePlayerUsername);
         for (let i = 0; i < players.size; i++) {
-            let username;
+            let username = playerUsernames[i];
             if (i !== activePlayerIndex) {
-                username = playerUsernames[i];
-                m_playerDivIds.set(username, i);
-            } else {
-                username = activePlayerUsername;
+                let opponentId = i + 1;
+                m_playerDivIds.set(username, opponentId);
             }
             getPlayerUsernameSpan(username).textContent = nicknames[i]; // TODO: remove
             let score = players.get(username).points;
