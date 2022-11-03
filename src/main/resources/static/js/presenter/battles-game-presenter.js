@@ -133,7 +133,7 @@ let BattlesGamePresenter = new function() {
 		}
 		if (m_roundsLeft > 0) {
 			m_gameState = GameStates.RoundStartCountdown;
-			m_roundTimeLeft = ROUND_START_COUNTDOWN_DURATION + ROUND_DURATION
+			m_roundTimeLeft = ROUND_START_COUNTDOWN_DURATION + ROUND_DURATION + 1;
 		} else {
 			endGame();
 		}
@@ -184,6 +184,7 @@ let BattlesGamePresenter = new function() {
 		if (m_gameState === GameStates.GameStartCountdown) {
 			if (m_gameStartTimeLeft > 0) {
 				m_gameStartTimeLeft -= 1;
+				// BattlesView.setGameTimeLeft(m_roundTimeLeft); // TODO
 				console.log("Game timer tick!"); // TODO: remove
 			}
 		} else if (m_gameState === GameStates.RoundStartCountdown ||
@@ -191,6 +192,7 @@ let BattlesGamePresenter = new function() {
 					m_gameState === GameStates.RoundEnding) {
 			if (m_roundTimeLeft > 0) {
 				m_roundTimeLeft -= 1;
+				BattlesView.setRoundTimeLeft(m_roundTimeLeft);
 				console.log("Round timer tick!"); // TODO: remove
 			}
 		}

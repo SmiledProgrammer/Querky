@@ -178,9 +178,9 @@ public class BattlesGame {
                 gameState == WordsGameState.ROUND_ENDING) {
             log.info("Round time: {}", roundTimeLeft);
             roundTimeLeft -= 1;
-            if (roundTimeLeft == ROUND_DURATION - 1) {
+            if (roundTimeLeft == ROUND_DURATION) {
                 startGuessingPhase();
-            } else if (roundTimeLeft < 0) {
+            } else if (roundTimeLeft == 0) {
                 endRound();
             }
         }

@@ -21,7 +21,7 @@ let BattlesView = new function() {
         setTableNumber(tableNumber);
         // TODO: handle game time left
         setRoundNumber(roundNumber);
-        setRoundTimeLeft(roundTime);
+        this.setRoundTimeLeft(roundTime);
         m_playerDivIds.set(activePlayerUsername, 0);
         let playerUsernames = Array.from(players.keys());
         let activePlayerIndex = playerUsernames.indexOf(activePlayerUsername);
@@ -84,18 +84,18 @@ let BattlesView = new function() {
 
     };
 
+    this.setRoundTimeLeft = function(roundTime) {
+        let minutes = Math.floor(roundTime / 60);
+        let seconds = (roundTime % 60).toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping:false });
+        m_roundTimerSpan.textContent = minutes + ":" + seconds;
+    };
+
     let setTableNumber = function(tableNumber) {
         m_tableNumberSpan.textContent = "Stół #" + tableNumber;
     };
 
     let setRoundNumber = function(roundNumber) {
         m_roundNumberSpan.textContent = "Runda " + roundNumber;
-    };
-
-    let setRoundTimeLeft = function(roundTime) {
-        let minutes = Math.floor(roundTime / 60);
-        let seconds = roundTime % 60;
-        m_roundTimerSpan.textContent = minutes + ":" + seconds;
     };
 
     let getPlayerUsernameSpan = function(username) {
