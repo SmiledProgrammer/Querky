@@ -77,9 +77,11 @@ let GameUI = new function() {
 		let playerBoards = document.getElementsByClassName("playerBoard");
 		for (let board of playerBoards) {
 			let boardId = board.id;
+			let wordTableDiv = document.createElement("div");
+			wordTableDiv.setAttribute("class", "wordTableDiv");
+
 			let wordTable = document.createElement("table");
 			let wordTableBody = document.createElement("tbody");
-			wordTable.appendChild(wordTableBody);
 			for (let row = 0; row < TRIES_COUNT; row++) {
 				let tableRow = document.createElement("tr");
 				let rowId = boardId + "-" + row.toString();
@@ -92,13 +94,16 @@ let GameUI = new function() {
 				}
 				wordTableBody.appendChild(tableRow);
 			}
-			board.appendChild(wordTable);
 
 			let overlayDiv = document.createElement("div");
 			let overlayId = boardId + "-" + "overlay";
 			overlayDiv.setAttribute("id", overlayId);
 			overlayDiv.setAttribute("class", "overlay");
-			// board.appendChild(overlayDiv); // TODO: fix styling
+
+			wordTable.appendChild(wordTableBody);
+			wordTableDiv.appendChild(wordTable);
+			wordTableDiv.appendChild(overlayDiv);
+			board.appendChild(wordTableDiv);
 		}
 	};
 }

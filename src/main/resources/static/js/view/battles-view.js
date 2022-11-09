@@ -90,6 +90,32 @@ let BattlesView = new function() {
         m_roundTimerSpan.textContent = minutes + ":" + seconds;
     };
 
+    this.markPlayerHasGuessed = function(username) {
+        let overlayDiv = getPlayerOverlayDiv(username);
+        overlayDiv.setAttribute("class", "overlay overlayGreen");
+        overlayDiv.textContent = "Guessed!";
+    };
+
+    this.markPlayerHasFailedToGuess = function(username) {
+        let overlayDiv = getPlayerOverlayDiv(username);
+        overlayDiv.setAttribute("class", "overlay overlayRed");
+        overlayDiv.textContent = "Failed";
+    };
+
+    let setGrayAllTableOverlays = function() {
+        let overlayDivs = document.getElementsByClassName("overlay");
+        for (let overlay of overlayDivs) {
+            overlay.setAttribute("class", "overlay overlayGray");
+        }
+    };
+
+    let clearAllTableOverlays = function() {
+        let overlayDivs = document.getElementsByClassName("overlay");
+        for (let overlay of overlayDivs) {
+            overlay.setAttribute("class", "overlay");
+        }
+    };
+
     let setTableNumber = function(tableNumber) {
         m_tableNumberSpan.textContent = "Stół #" + tableNumber;
     };
@@ -115,7 +141,10 @@ let BattlesView = new function() {
     };
 
     let getPlayerOverlayDiv = function(username) {
-
+        let playerId = m_playerDivIds.get(username);
+        let divPrefix = (playerId === 0) ? "activePlayer-" : "opponent-" + playerId;
+        let divId = divPrefix + "-overlay";
+        return document.getElementById(divId);
     };
 
     let getMainOverlayDiv = function() {

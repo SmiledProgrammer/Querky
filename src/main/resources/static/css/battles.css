@@ -22,6 +22,12 @@ div.opponentBoards {
   justify-content: center;
 }
 
+.opponentBoard {
+  position: relative;
+  width: 9rem;
+  height: 9rem;
+}
+
 div.opponentBoard table {
   width: 6.4rem;
   height: 6.4rem;
@@ -80,12 +86,56 @@ div.opponentBoard td {
   font-size: 1.3rem;
 }
 
+.wordTableDiv {
+  position: relative;
+}
+
+.activeBoard .wordTableDiv {
+  width: 25rem;
+  height: 25rem;
+}
+
+.opponentBoard .wordTableDiv {
+  width: 9rem;
+  height: 9rem;
+}
+
 .overlay {
-  width: 100%;
-  height: 100%;
   position: absolute;
-  top: 0;
-  left: 0;
   z-index: 1;
-  background-color: rgba(1, 0, 0, 0.5);
+  text-align: center;
+}
+
+.activeBoard .overlay {
+  width: 100%;
+  height: 101%;
+  top: -0.5%;
+  left: 0;
+  border-radius: .5rem;
+  line-height: 21rem;
+  font-size: 2rem;
+}
+
+.opponentBoard .overlay {
+  width: 72%;
+  height: 73%;
+  top: -1%;
+  left: 14%;
+  border-radius: .15rem;
+  line-height: 6.5rem;
+}
+
+.overlay.overlayGray {
+  color: black;
+  background-color: rgba(192, 192, 192, 0.5);
+}
+
+.overlay.overlayGreen {
+  color: rgb(34, 139, 34);
+  background-color: rgba(34, 139, 34, 0.5);
+}
+
+.overlay.overlayRed {
+  color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.5);
 }
