@@ -113,7 +113,7 @@ div.opponentBoard td {
   left: 0;
   border-radius: .5rem;
   line-height: 21rem;
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .opponentBoard .overlay {
@@ -123,6 +123,7 @@ div.opponentBoard td {
   left: 14%;
   border-radius: .15rem;
   line-height: 6.5rem;
+  font-size: .5rem;
 }
 
 .overlay.overlayGray {

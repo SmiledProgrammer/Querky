@@ -30,7 +30,8 @@
 		<script src="/webjars/stomp-websocket/2.3.4/stomp.min.js"></script>
 		<script src="../js/render/website-ui.js"></script>
 		<script src="../js/render/game-ui.js"></script>
-		<script src="../js/view/game-view.js"></script>
+		<script src="../js/view/game-view-common.js"></script>
+		<script src="../js/view/solo-view.js"></script>
 		<script src="../js/view/battles-view.js"></script>
 		<script src="../js/client/battles-client.js"></script>
 		<script src="../js/presenter/battles-game-presenter.js"></script>
@@ -42,6 +43,7 @@
 			GameUI.createOpponentBoards();
 			GameUI.renderWordTables();
 			BattlesGamePresenter.init();
+			SoloView.init(BattlesGamePresenter);
 		</script>
 	</body>
 </html>

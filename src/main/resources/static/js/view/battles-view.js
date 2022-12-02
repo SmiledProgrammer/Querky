@@ -2,7 +2,7 @@
 
 let BattlesView = new function() {
 
-    const nicknames = ["Niszczyciel", "Stokrotka", "Władziu", "XDkox"]; // TODO: remove
+    const usernames = ["Niszczyciel", "Stokrotka", "Władziu", "XDkox"]; // TODO: remove
 
     let m_tableNumberSpan;
     let m_roundNumberSpan;
@@ -31,7 +31,7 @@ let BattlesView = new function() {
                 let opponentId = i + 1;
                 m_playerDivIds.set(username, opponentId);
             }
-            getPlayerUsernameSpan(username).textContent = nicknames[i]; // TODO: remove
+            getPlayerUsernameSpan(username).textContent = usernames[i]; // TODO: remove
             let score = players.get(username).points;
             getPlayerScoreSpan(username).textContent = "- " + score + " -";
         }
@@ -40,7 +40,7 @@ let BattlesView = new function() {
     this.updateViewOnPlayerJoinedTable = function(username) {
         let playerDivId = m_playerDivIds.size;
         m_playerDivIds.set(username, playerDivId);
-        getPlayerUsernameSpan(username).textContent = nicknames[playerDivId]; // TODO: remove
+        getPlayerUsernameSpan(username).textContent = usernames[playerDivId]; // TODO: remove
         getPlayerScoreSpan(username).textContent = "- 0 -";
     };
 
@@ -49,7 +49,7 @@ let BattlesView = new function() {
     };
 
     this.updateViewOnGameStartCountdownStart = function() {
-
+        setAllTableOverlaysGray();
     };
 
     this.updateViewOnGameStartCountdownCancel = function() {
@@ -65,44 +65,78 @@ let BattlesView = new function() {
     };
 
     this.updateViewOnRoundCountdownStart = function() {
-
+        setAllTableOverlaysGray();
     };
 
     this.updateViewOnGuessingPhaseStart = function() {
-
+        clearAllTableOverlays();
     };
 
     this.updateViewOnRoundEnd = function() {
 
     };
 
-    this.updateViewOnPlayerGuess = function() {
-
+    this.updateViewOnOpponentGuess = function(username, matchList, activeRow) {
+        console.log("========================= " + typeof matchList + " -> " + matchList + " =========================");
+        if (matchList.length > 0) {
+            let opponentId = m_playerDivIds.get(username);
+            for (let i = 0; i < WORD_LENGTH; i++) {
+                let letterCell = GameViewCommon.getPlayersLetterCell("opponent-" + opponentId, activeRow, i);
+                let letterClass = GameViewCommon.LetterClasses.get(matchList[i].toString());
+                letterCell.setAttribute("class", letterClass);
+            }
+        }
     };
 
     this.updateViewOnGameEnd = function() {
 
     };
 
+    // TODO: make this function used only in context of currently running round (not when round countdown is going)
     this.setRoundTimeLeft = function(roundTime) {
         let minutes = Math.floor(roundTime / 60);
-        let seconds = (roundTime % 60).toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping:false });
+        let seconds = (roundTime % 60).toLocaleString(
+            'en-US', { minimumIntegerDigits: 2, useGrouping: false });
         m_roundTimerSpan.textContent = minutes + ":" + seconds;
+        if (roundTime > ROUND_DURATION) {
+            setRoundStartCountdownTimeLeft(roundTime - ROUND_DURATION);
+        }
+    };
+
+    this.setGameStartCountdownTimeLeft = function(time) {
+        let mainOverlayDiv = getMainOverlayDiv();
+        mainOverlayDiv.textContent = "Gra zaczyna się za " + time + " sekund...";
     };
 
     this.markPlayerHasGuessed = function(username) {
         let overlayDiv = getPlayerOverlayDiv(username);
         overlayDiv.setAttribute("class", "overlay overlayGreen");
-        overlayDiv.textContent = "Guessed!";
+        overlayDiv.textContent = "Zgadnięte!";
     };
 
     this.markPlayerHasFailedToGuess = function(username) {
         let overlayDiv = getPlayerOverlayDiv(username);
         overlayDiv.setAttribute("class", "overlay overlayRed");
-        overlayDiv.textContent = "Failed";
+        overlayDiv.textContent = "Skucha";
     };
 
-    let setGrayAllTableOverlays = function() {
+    this.resetOpponentsTables = function() {
+        for (let i = 1; i < PLAYERS_COUNT; i++) {
+            for (let row = 0; row < TRIES_COUNT; row++) {
+                for (let col = 0; col < WORD_LENGTH; col++) {
+                    let letterCell = GameViewCommon.getPlayersLetterCell("opponent-" + i, row, col);
+                    letterCell.removeAttribute("class");
+                }
+            }
+        }
+    };
+
+    let setRoundStartCountdownTimeLeft = function(time) {
+        let mainOverlayDiv = getMainOverlayDiv();
+        mainOverlayDiv.textContent = "Runda zaczyna się za " + time + " sekund...";
+    };
+
+    let setAllTableOverlaysGray = function() {
         let overlayDivs = document.getElementsByClassName("overlay");
         for (let overlay of overlayDivs) {
             overlay.setAttribute("class", "overlay overlayGray");
@@ -113,6 +147,7 @@ let BattlesView = new function() {
         let overlayDivs = document.getElementsByClassName("overlay");
         for (let overlay of overlayDivs) {
             overlay.setAttribute("class", "overlay");
+            overlay.textContent = "";
         }
     };
 
@@ -134,10 +169,6 @@ let BattlesView = new function() {
         let playerId = m_playerDivIds.get(username);
         let scoreSpanId = (playerId === 0) ? "activeScore" : "opponentScore-" + playerId;
         return document.getElementById(scoreSpanId);
-    };
-
-    let getPlayerBoardCell = function(username, row, column) {
-
     };
 
     let getPlayerOverlayDiv = function(username) {

@@ -22,7 +22,7 @@ let GameUI = new function() {
 				let letter = rowKeys.charAt(i);
 				let buttonId = (letter !== "<") ? ("letterKey-" + letter) : ("backspaceKey");
 				keyButton.setAttribute("id", buttonId);
-				keyButton.setAttribute("onClick", "GameView.handleKeyboardPress(this.id)");
+				keyButton.setAttribute("onClick", "SoloView.handleKeyboardPress(this.id)");
 				keyButton.textContent = letter;
 				keyboardRow.appendChild(keyButton);
 			}

@@ -36,7 +36,7 @@ let BattlesClient = new function() {
 			case 211: receiveRoundCountdownStart(); break;
 			case 212: receiveRoundGuessingPhaseStart(); break;
 			case 213: receiveRoundEnd(msg.d[0]); break;
-			case 221: receivePlayerGuess(msg.d[0], msg.d[1]); break;
+			case 221: receivePlayerGuess(msg.d[0], msg.d[1].matches); break;
 			default: console.error("Unknown websockets message type.");
 		}
 	};
@@ -51,7 +51,7 @@ let BattlesClient = new function() {
 		return null;
 	};
 
-	this.getClientNickname = function() {
+	this.getClientUsername = function() {
 		return m_sessionId;
 	};
 
@@ -77,20 +77,20 @@ let BattlesClient = new function() {
 		m_tableSubscriptionId = tableSubscription.id;
 	};
 
-	let receivePlayerJoinedTable = function(nickname) {
-		BattlesClient.handlePlayerJoinedTable(nickname);
+	let receivePlayerJoinedTable = function(username) {
+		BattlesClient.handlePlayerJoinedTable(username);
 	};
 
-	let receivePlayerLeftTable = function(nickname) {
-		if (BattlesClient.getClientNickname() === nickname) {
+	let receivePlayerLeftTable = function(username) {
+		if (BattlesClient.getClientUsername() === username) {
 			m_stompClient.unsubscribe(m_tableSubscriptionId);
 			m_tableSubscriptionId = undefined;
 		}
-		BattlesClient.handlePlayerLeftTable(nickname);
+		BattlesClient.handlePlayerLeftTable(username);
 	};
 
-	let receivePlayerReady = function(nickname, ready) {
-		BattlesClient.handlePlayerReady(nickname, ready);
+	let receivePlayerReady = function(username, ready) {
+		BattlesClient.handlePlayerReady(username, ready);
 	};
 
 	let receiveRoundCountdownStart = function() {
@@ -105,8 +105,8 @@ let BattlesClient = new function() {
 		BattlesClient.handleRoundEnd(pointsList);
 	};
 
-	let receivePlayerGuess = function(nickname, matchList) {
-		BattlesClient.handlePlayerGuess(nickname, matchList);
+	let receivePlayerGuess = function(username, matchList) {
+		BattlesClient.handlePlayerGuess(username, matchList);
 	};
 
 	let receiveDisallowedWordError = function() {

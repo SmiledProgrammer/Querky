@@ -18,13 +18,16 @@
 
 		<script src="../js/render/website-ui.js"></script>
 		<script src="../js/render/game-ui.js"></script>
-		<script src="../js/view/game-view.js"></script>
+		<script src="../js/view/game-view-common.js"></script>
+		<script src="../js/view/solo-view.js"></script>
 		<script src="../js/presenter/solo-game-presenter.js"></script>
 		<script>
 			WebsiteUI.renderHeader();
 			WebsiteUI.renderFooter();
 			GameUI.renderKeyboard();
 			GameUI.renderWordTables();
+			SoloGamePresenter.init();
+			SoloView.init(SoloGamePresenter);
 		</script>
 	</body>
 </html>

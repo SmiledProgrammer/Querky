@@ -20,7 +20,6 @@ public class WordsInputController {
 
     protected final WordsOutputController outputController;
     protected final WordsService wordsService;
-    protected final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/words/join-table")
     public void handleJoinedTable(@Header("simpSessionId") String sessionId, List<String> dataMsg) {
@@ -58,5 +57,10 @@ public class WordsInputController {
         int tableNumber = wordsService.getPlayersTableNumber(username);
         outputController.broadcastTableMessage(tableNumber, msg);
         wordsService.checkIfAllPlayersOnTableFinished(tableNumber);
+    }
+
+    @MessageMapping("/words/solo/guess")
+    public void handleSoloGuess(@Header("simpSessionId") String sessionId, List<String> dataMsg) {
+        // TODO: fetch wordId and guessWord from dataMsg
     }
 }

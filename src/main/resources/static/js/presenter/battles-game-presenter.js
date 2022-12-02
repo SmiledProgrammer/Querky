@@ -13,16 +13,6 @@ const GameStates = {
 	RoundEnding: Symbol("roundEnding")
 };
 
-document.addEventListener("keydown", (event) => {
-	let key = event.code;
-	GameView.handleKeyboardKeyDown(key);
-});
-
-document.addEventListener("keyup", (event) => {
-	let key = event.code;
-	GameView.handleKeyboardKeyUp(key);
-});
-
 let BattlesGamePresenter = new function() {
 
 	let m_tableNumber;
@@ -86,32 +76,32 @@ let BattlesGamePresenter = new function() {
 			startGameStartCountdown();
 		}
 		// TODO: load actual game state in any moment of the game
-		let activeUsername = BattlesClient.getClientNickname();
+		let activeUsername = BattlesClient.getClientUsername();
 		let roundNumber = ROUND_COUNT - m_roundsLeft + 1;
 		BattlesView.updateViewOnJoinTableData(activeUsername, m_tableNumber, m_gameStartTimeLeft,
 												roundNumber, m_roundTimeLeft, m_players);
 	};
 
-	this.handlePlayerJoinedTable = function(nickname) {
-		if (BattlesClient.getClientNickname() !== nickname) {
+	this.handlePlayerJoinedTable = function(username) {
+		if (!isActivePlayer(username)) {
 			let player = {
 				"isPlaying": true,
 				"points": 0,
 				"letterMatches": []
 			};
-			m_players.set(nickname, player);
+			m_players.set(username, player);
 			if (m_players.size >= 2) {
 				startGameStartCountdown();
 			}
-			BattlesView.updateViewOnPlayerJoinedTable(nickname);
+			BattlesView.updateViewOnPlayerJoinedTable(username);
 		}
 	};
 
-	this.handlePlayerLeftTable = function(nickname) {
-		if (BattlesClient.getClientNickname() === nickname) {
+	this.handlePlayerLeftTable = function(username) {
+		if (isActivePlayer(username)) {
 			resetGameState();
 		} else {
-			m_players.delete(nickname);
+			m_players.delete(username);
 			if (m_players.size <= 1) {
 				if (m_gameState === GameStates.GameStartCountdown) {
 					cancelGameStartCountdown();
@@ -120,10 +110,10 @@ let BattlesGamePresenter = new function() {
 				}
 			}
 		}
-		BattlesView.updateViewOnPlayerLeftTable(nickname);
+		BattlesView.updateViewOnPlayerLeftTable(username);
 	};
 
-	this.handlePlayerReady = function(nickname, ready) {
+	this.handlePlayerReady = function(username, ready) {
 		// TODO
 	};
 
@@ -134,6 +124,8 @@ let BattlesGamePresenter = new function() {
 		if (m_roundsLeft > 0) {
 			m_gameState = GameStates.RoundStartCountdown;
 			m_roundTimeLeft = ROUND_START_COUNTDOWN_DURATION + ROUND_DURATION + 1;
+			BattlesView.setRoundTimeLeft(m_roundTimeLeft);
+			BattlesView.updateViewOnRoundCountdownStart();
 		} else {
 			endGame();
 		}
@@ -141,19 +133,29 @@ let BattlesGamePresenter = new function() {
 
 	this.handleRoundGuessingPhaseStart = function() {
 		m_gameState = GameStates.GuessingPhase;
+		SoloView.canInputLetters = true;
+		BattlesView.updateViewOnGuessingPhaseStart();
+		setupRound();
 	};
 
 	this.handleRoundEnd = function(pointsList) {
 		m_gameState = GameStates.RoundEnding;
+		SoloView.canInputLetters = false;
 		m_roundsLeft -= 1;
-		for (let nickname in pointsList) {
-			m_players.get(nickname).points = pointsList[nickname];
-			m_players.get(nickname).letterMatches = [];
+		for (let username in pointsList) {
+			m_players.get(username).points = pointsList[username];
+			m_players.get(username).letterMatches = [];
 		}
 	};
 
-	this.handlePlayerGuess = function(nickname, matchList) {
-		m_players.get(nickname).letterMatches.push(matchList.matches);
+	this.handlePlayerGuess = function(username, matchList) {
+		m_players.get(username).letterMatches.push(matchList);
+		if (isActivePlayer(username)) { 
+			SoloView.markGuess(matchList);
+		} else {
+			let opponentsActiveRow = m_players.get(username).letterMatches.length - 1;
+			BattlesView.updateViewOnOpponentGuess(username, matchList, opponentsActiveRow);
+		}
 	};
 
 	this.handleDisallowedWordError = function() {
@@ -162,9 +164,9 @@ let BattlesGamePresenter = new function() {
 
 	let startGame = function() {
 		m_gameState = GameStates.RoundStartCountdown;
-		for (let nickname of m_players.keys()) {
-			m_players.get(nickname).points = 0;
-			m_players.get(nickname).letterMatches = [];
+		for (let username of m_players.keys()) {
+			m_players.get(username).points = 0;
+			m_players.get(username).letterMatches = [];
 		}
 		m_roundsLeft = ROUND_COUNT;
 	};
@@ -173,6 +175,7 @@ let BattlesGamePresenter = new function() {
 		m_gameState = GameStates.GameStartCountdown;
 		m_gameStartTimeLeft = GAME_START_COUNTDOWN_DURATION;
 		startTimer();
+		BattlesView.updateViewOnGameStartCountdownStart();
 	};
 
 	let cancelGameStartCountdown = function() {
@@ -180,12 +183,19 @@ let BattlesGamePresenter = new function() {
 		stopTimer();
 	};
 
+	let setupRound = function() {
+		for (const [key, value] of m_players) {
+			m_players.get(key).letterMatches = [];
+		}
+		BattlesView.resetOpponentsTables();
+		SoloView.setup();
+	};
+
 	let handleTimerTick = function() {
 		if (m_gameState === GameStates.GameStartCountdown) {
 			if (m_gameStartTimeLeft > 0) {
 				m_gameStartTimeLeft -= 1;
-				// BattlesView.setGameTimeLeft(m_roundTimeLeft); // TODO
-				console.log("Game timer tick!"); // TODO: remove
+				BattlesView.setGameStartCountdownTimeLeft(m_gameStartTimeLeft);
 			}
 		} else if (m_gameState === GameStates.RoundStartCountdown ||
 					m_gameState === GameStates.GuessingPhase ||
@@ -193,7 +203,6 @@ let BattlesGamePresenter = new function() {
 			if (m_roundTimeLeft > 0) {
 				m_roundTimeLeft -= 1;
 				BattlesView.setRoundTimeLeft(m_roundTimeLeft);
-				console.log("Round timer tick!"); // TODO: remove
 			}
 		}
 	};
@@ -213,8 +222,8 @@ let BattlesGamePresenter = new function() {
 	let endGame = function() {
 		stopTimer();
 		m_gameState = GameStates.WaitingForPlayers;
-		for (let nickname of m_players.keys()) {
-			m_players.get(nickname).isPlaying = false;
+		for (let username of m_players.keys()) {
+			m_players.get(username).isPlaying = false;
 		}
 	};
 
@@ -244,5 +253,9 @@ let BattlesGamePresenter = new function() {
 			fetchedPlayers.set(player.username, fetchedPlayer);
 		}
 		return fetchedPlayers;
+	};
+	
+	let isActivePlayer = function(username) {
+		return username === BattlesClient.getClientUsername();
 	};
 }
