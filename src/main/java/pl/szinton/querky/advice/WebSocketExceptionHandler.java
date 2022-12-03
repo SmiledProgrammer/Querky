@@ -13,6 +13,6 @@ public class WebSocketExceptionHandler {
 
     @MessageExceptionHandler(value = {InvalidFormatException.class, MismatchedInputException.class})
     public void handleMessageConversionException(MessageConversionException ex) {
-        log.error("Failed to convert incoming message: " + ex.getMessage());
+        log.error("Failed to convert incoming message: {}", ex.getMessage());
     }
 }
