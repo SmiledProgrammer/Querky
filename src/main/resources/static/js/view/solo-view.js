@@ -41,7 +41,7 @@ let SoloView = new function() {
 	};
 
 	this.markGuess = function(matchList) {
-		if (matchList.length > 0) {
+		if (matchList !== null) {
 			for (let i = 0; i < WORD_LENGTH; i++) {
 				let letterCell = GameViewCommon.getPlayersLetterCell("activePlayer", this.activeRow, i);
 				let letterClass = GameViewCommon.LetterClasses.get(matchList[i].toString());

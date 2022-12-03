@@ -77,7 +77,6 @@ let BattlesView = new function() {
     };
 
     this.updateViewOnOpponentGuess = function(username, matchList, activeRow) {
-        console.log("========================= " + typeof matchList + " -> " + matchList + " =========================");
         if (matchList.length > 0) {
             let opponentId = m_playerDivIds.get(username);
             for (let i = 0; i < WORD_LENGTH; i++) {
@@ -108,13 +107,13 @@ let BattlesView = new function() {
         mainOverlayDiv.textContent = "Gra zaczyna się za " + time + " sekund...";
     };
 
-    this.markPlayerHasGuessed = function(username) {
+    this.markPlayerHasGuessed = function(username) { // TODO: integrate
         let overlayDiv = getPlayerOverlayDiv(username);
         overlayDiv.setAttribute("class", "overlay overlayGreen");
         overlayDiv.textContent = "Zgadnięte!";
     };
 
-    this.markPlayerHasFailedToGuess = function(username) {
+    this.markPlayerHasFailedToGuess = function(username) { // TODO: integrate
         let overlayDiv = getPlayerOverlayDiv(username);
         overlayDiv.setAttribute("class", "overlay overlayRed");
         overlayDiv.textContent = "Skucha";

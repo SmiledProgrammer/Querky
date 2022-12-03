@@ -159,7 +159,7 @@ let BattlesGamePresenter = new function() {
 	};
 
 	this.handleDisallowedWordError = function() {
-		// TODO
+		SoloView.markGuess(null);
 	};
 
 	let startGame = function() {

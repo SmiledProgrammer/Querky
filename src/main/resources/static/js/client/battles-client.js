@@ -22,9 +22,10 @@ let BattlesClient = new function() {
 	this.handleReceiveMessage = function(rawMsg) {
 		let msg = BattlesClient.convertRawJson(rawMsg);
 		if (msg.error === true) {
-			console.error("Received error message: " + msg.d[0]);
 			if (msg.c === 922) {
 				receiveDisallowedWordError();
+			} else {
+				console.error("Received error message: " + msg.d[0]);
 			}
 			return;
 		}
