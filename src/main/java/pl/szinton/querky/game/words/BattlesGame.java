@@ -102,12 +102,12 @@ public class BattlesGame {
         log.info("Ended round.");
         gameState = WordsGameState.ROUND_ENDING;
         roundsLeft -= 1;
-        orderOfCorrectGuesses.clear();
         for (Player player : players.values()) {
             int guessPlace = orderOfCorrectGuesses.indexOf(player.getUsername());
-            player.processPoints(guessPlace);
+            player.processPoints(guessPlace, players.size());
             player.resetLetterMatches();
         }
+        orderOfCorrectGuesses.clear();
         Map<String, Integer> playerPoints = players.values().stream()
                 .collect(Collectors.toMap(Player::getUsername, Player::getPoints));
         wordsService.handleRoundEnd(tableNumber, playerPoints);

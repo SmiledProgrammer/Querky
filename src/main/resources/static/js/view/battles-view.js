@@ -72,8 +72,11 @@ let BattlesView = new function() {
         clearAllTableOverlays();
     };
 
-    this.updateViewOnRoundEnd = function() {
-
+    this.updateViewOnRoundEnd = function(pointsList) {
+        for (const [username, _] of m_playerDivIds) {
+            let points = pointsList[username];
+            getPlayerScoreSpan(username).textContent = "- " + points + " -";
+        }
     };
 
     this.updateViewOnOpponentGuess = function(username, matchList, activeRow) {

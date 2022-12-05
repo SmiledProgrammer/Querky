@@ -146,6 +146,7 @@ let BattlesGamePresenter = new function() {
 			m_players.get(username).points = pointsList[username];
 			m_players.get(username).letterMatches = [];
 		}
+		BattlesView.updateViewOnRoundEnd(pointsList);
 	};
 
 	this.handlePlayerGuess = function(username, matchList) {

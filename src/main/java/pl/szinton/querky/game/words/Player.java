@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static pl.szinton.querky.game.words.Constants.GUESS_COUNT;
+import static pl.szinton.querky.game.words.Constants.PLAYERS_LIMIT;
 
 @Getter
 class Player {
@@ -24,7 +25,7 @@ class Player {
         this.hasGuessedCorrectly = false;
     }
 
-    public void processPoints(int guessPlace) {
+    public void processPoints(int guessPlace, int playerCount) {
         if (guessPlace == -1) {
             return;
         }
@@ -37,7 +38,7 @@ class Player {
         } else if (guessTries == GUESS_COUNT) {
             basePoints = 40;
         }
-        float multiplier = guessPlace * 0.25f;
+        float multiplier = (playerCount - guessPlace) / (float) playerCount;
         int points = (int) (basePoints * multiplier);
         this.points += points;
     }
