@@ -65,7 +65,7 @@ let BattlesView = new function() {
     };
 
     this.updateViewOnRoundCountdownStart = function() {
-        setAllTableOverlaysGray();
+        setAllTableWithoutOverlaysGray();
     };
 
     this.updateViewOnGuessingPhaseStart = function() {
@@ -110,16 +110,14 @@ let BattlesView = new function() {
         mainOverlayDiv.textContent = "Gra zaczyna się za " + time + " sekund...";
     };
 
-    this.markPlayerHasGuessed = function(username) { // TODO: integrate
+    this.markPlayerHasGuessed = function(username) {
         let overlayDiv = getPlayerOverlayDiv(username);
         overlayDiv.setAttribute("class", "overlay overlayGreen");
-        overlayDiv.textContent = "Zgadnięte!";
     };
 
-    this.markPlayerHasFailedToGuess = function(username) { // TODO: integrate
+    this.markPlayerHasFailedToGuess = function(username) {
         let overlayDiv = getPlayerOverlayDiv(username);
         overlayDiv.setAttribute("class", "overlay overlayRed");
-        overlayDiv.textContent = "Skucha";
     };
 
     this.resetOpponentsTables = function() {
@@ -142,6 +140,15 @@ let BattlesView = new function() {
         let overlayDivs = document.getElementsByClassName("overlay");
         for (let overlay of overlayDivs) {
             overlay.setAttribute("class", "overlay overlayGray");
+        }
+    };
+
+    let setAllTableWithoutOverlaysGray = function() {
+        let overlayDivs = document.getElementsByClassName("overlay");
+        for (let overlay of overlayDivs) {
+            if (overlay.getAttribute("class") === "overlay") {
+                overlay.setAttribute("class", "overlay overlayGray");
+            }
         }
     };
 

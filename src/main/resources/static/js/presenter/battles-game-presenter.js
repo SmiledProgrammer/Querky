@@ -156,6 +156,11 @@ let BattlesGamePresenter = new function() {
 		} else {
 			let opponentsActiveRow = m_players.get(username).letterMatches.length - 1;
 			BattlesView.updateViewOnOpponentGuess(username, matchList, opponentsActiveRow);
+			if (isCorrectMatch(matchList)) {
+				BattlesView.markPlayerHasGuessed(username);
+			} else if (m_players.get(username).letterMatches.length === TRIES_COUNT) {
+				BattlesView.markPlayerHasFailedToGuess(username);
+			}
 		}
 	};
 
@@ -258,5 +263,14 @@ let BattlesGamePresenter = new function() {
 	
 	let isActivePlayer = function(username) {
 		return username === BattlesClient.getClientUsername();
+	};
+
+	let isCorrectMatch = function(matchList) {
+		for (let i = 0; i < matchList.length; i++) {
+			if (matchList[i] !== 2) {
+				return false;
+			}
+		}
+		return true;
 	};
 }

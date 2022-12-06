@@ -1,9 +1,9 @@
 'use strict';
 
 const MenuOptions = [
-	["/home.html", "Home"],
+	["/home.html", "Start"],
 	["/words/solo.html", "Solo"],
-	["/words/battles.html", "Battles"]
+	["/words/battles.html", "Bitwy"]
 ];
 
 let WebsiteUI = new function() {
