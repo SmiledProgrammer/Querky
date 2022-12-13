@@ -11,11 +11,17 @@ let SoloView = new function() {
 	this.canInputLetters = false;
 
 	let altPressed = false;
-	let requestHandler = undefined;
+	let requestSender = undefined;
 
-	this.init = function(presenter) {
-		requestHandler = presenter;
+	this.initForBattlesGame = function(presenter) {
 		this.setup();
+		requestSender = presenter;
+	};
+
+	this.initForSoloGame = function(presenter) {
+		this.setup();
+		requestSender = presenter;
+		this.canInputLetters = true;
 	};
 
 	this.setup = function() {
@@ -37,7 +43,7 @@ let SoloView = new function() {
 	};
 
 	this.enterGuess = function(guessWord) {
-		requestHandler.makeGuess(guessWord);
+		requestSender.makeGuess(guessWord);
 	};
 
 	this.markGuess = function(matchList) {

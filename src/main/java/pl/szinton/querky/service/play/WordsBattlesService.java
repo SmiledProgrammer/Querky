@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class WordsService {
+public class WordsBattlesService {
 
     protected static final int TABLES_COUNT = 1;
 
@@ -22,7 +22,7 @@ public class WordsService {
     protected final Map<String, Integer> playersOnTables;
     protected final Map<Integer, BattlesGame> gameTables;
 
-    public WordsService(WordsOutputController outputController, WordsDictionaryService dictionaryService) {
+    public WordsBattlesService(WordsOutputController outputController, WordsDictionaryService dictionaryService) {
         this.outputController = outputController;
         this.dictionaryService = dictionaryService;
         this.playersOnTables = new HashMap<>();

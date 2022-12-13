@@ -16,10 +16,14 @@
 			</div>
 		</div>
 
+		<script src="/webjars/sockjs-client/1.1.1/sockjs.min.js"></script>
+		<script src="/webjars/stomp-websocket/2.3.4/stomp.min.js"></script>
 		<script src="../js/render/website-ui.js"></script>
 		<script src="../js/render/game-ui.js"></script>
 		<script src="../js/view/game-view-common.js"></script>
 		<script src="../js/view/solo-view.js"></script>
+		<script src="../js/client/game-client-common.js"></script>
+		<script src="../js/client/solo-client.js"></script>
 		<script src="../js/presenter/solo-game-presenter.js"></script>
 		<script>
 			WebsiteUI.renderHeader();
@@ -27,7 +31,6 @@
 			GameUI.renderKeyboard();
 			GameUI.renderWordTables();
 			SoloGamePresenter.init();
-			SoloView.init(SoloGamePresenter);
 		</script>
 	</body>
 </html>

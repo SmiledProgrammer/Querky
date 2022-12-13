@@ -18,6 +18,7 @@ public enum WordsEvent {
     ROUND_COUNTDOWN_START(211),
     ROUND_GUESSING_PHASE_START(212),
     ROUND_END(213),
+    RANDOM_WORD_RESPONSE(220),
     PLAYER_GUESS(221),
 
     ERROR_NO_SUCH_TABLE(911, "There is no table with this number."),
@@ -27,7 +28,8 @@ public enum WordsEvent {
     ERROR_DISALLOWED_WORD(922, "The typed word is invalid."),
     ERROR_PLAYER_HAS_NO_GUESSES_LEFT(923, "The player has no word guesses left in this round."),
     ERROR_PLAYER_HAS_ALREADY_GUESSED(924, "The player has already guessed the word correctly in this round."),
-    ERROR_NOT_GUESSING_PHASE(925, "Can only submit guesses during guessing phase.");
+    ERROR_NOT_GUESSING_PHASE(925, "Can only submit guesses during guessing phase."),
+    ERROR_NO_WORD_WITH_THIS_INDEX(951, "There is no word in the dictionary with this index.");
 
     private final int code;
     private String errorMessage;

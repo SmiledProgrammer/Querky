@@ -27,8 +27,20 @@ public class WordsDictionaryService {
         return !wordsToEnter.contains(guessEntryWord);
     }
 
-    public String getRandomWord() {
-        int randomIndex = random.nextInt(wordsToGuess.size());
+    public String getRandomWordToGuess() {
+        int randomIndex = getRandomWordToGuessIndex();
         return wordsToGuess.get(randomIndex);
+    }
+
+    public int getRandomWordToGuessIndex() {
+        return random.nextInt(wordsToGuess.size());
+    }
+
+    public String getWordToGuessByIndex(int wordIndex) {
+        try {
+            return wordsToGuess.get(wordIndex);
+        } catch (IndexOutOfBoundsException ex) {
+            return null;
+        }
     }
 }

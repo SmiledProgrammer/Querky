@@ -7,20 +7,14 @@ let BattlesClient = new function() {
 	let m_tableSubscriptionId;
 
 	this.init = function() {
-		let socket = new SockJS("/querky");
-		m_stompClient = Stomp.over(socket);
-		m_stompClient.connect({}, function() {
-			m_sessionId = /\/([^\/]+)\/websocket/.exec(socket._transport.url)[1];
-			console.log("Connected to Querky. Session ID is: " + m_sessionId);
-			m_stompClient.subscribe("/queue/direct-" + m_sessionId, BattlesClient.handleReceiveMessage);
-			m_stompClient.subscribe("/topic/words", BattlesClient.handleReceiveMessage);
-
-			BattlesClient.sendJoinTable(100); // TODO: execute differently
-		});
+		let connectionResult = GameClientCommon.connectStomp(this.handleReceiveMessage);
+		m_stompClient = connectionResult[0];
+		m_sessionId = connectionResult[1];
+		this.sendJoinTable(100); // TODO: execute differently
 	};
 
 	this.handleReceiveMessage = function(rawMsg) {
-		let msg = BattlesClient.convertRawJson(rawMsg);
+		let msg = GameClientCommon.convertRawJson(rawMsg);
 		if (msg.error === true) {
 			if (msg.c === 922) {
 				receiveDisallowedWordError();
@@ -40,16 +34,6 @@ let BattlesClient = new function() {
 			case 221: receivePlayerGuess(msg.d[0], msg.d[1].matches); break;
 			default: console.error("Unknown websockets message type.");
 		}
-	};
-
-	this.convertRawJson = function(rawJson) {
-		try {
-			let noEscapesMsg = rawJson.body.replace(/\\"/g, '"');
-			return JSON.parse(noEscapesMsg);
-		} catch (err) {
-			console.error("Couldn't parse websockets message JSON content.");
-		}
-		return null;
 	};
 
 	this.getClientUsername = function() {

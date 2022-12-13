@@ -3,7 +3,7 @@ package pl.szinton.querky.game.words;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import pl.szinton.querky.enums.WordsGameState;
-import pl.szinton.querky.service.play.WordsService;
+import pl.szinton.querky.service.play.WordsBattlesService;
 import pl.szinton.querky.service.rest.WordsDictionaryService;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import static pl.szinton.querky.game.words.Constants.*;
 @Getter
 public class BattlesGame {
 
-    protected static WordsService wordsService;
+    protected static WordsBattlesService wordsService;
     protected static WordsDictionaryService dictionaryService;
 
     protected final int tableNumber;
@@ -41,7 +41,7 @@ public class BattlesGame {
         this.orderOfCorrectGuesses = new ArrayList<>();
     }
 
-    public static void initServices(WordsService wordsService, WordsDictionaryService dictionaryService) {
+    public static void initServices(WordsBattlesService wordsService, WordsDictionaryService dictionaryService) {
         BattlesGame.wordsService = wordsService;
         BattlesGame.dictionaryService = dictionaryService;
     }
@@ -84,7 +84,7 @@ public class BattlesGame {
         if (roundsLeft > 0) {
             log.info("Starting round...");
             gameState = WordsGameState.ROUND_START_COUNTDOWN;
-            currentWord = dictionaryService.getRandomWord();
+            currentWord = dictionaryService.getRandomWordToGuess();
             roundTimeLeft = ROUND_START_COUNTDOWN_DURATION + ROUND_DURATION;
             wordsService.handleRoundStart(tableNumber);
         } else {

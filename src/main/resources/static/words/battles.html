@@ -33,6 +33,7 @@
 		<script src="../js/view/game-view-common.js"></script>
 		<script src="../js/view/solo-view.js"></script>
 		<script src="../js/view/battles-view.js"></script>
+		<script src="../js/client/game-client-common.js"></script>
 		<script src="../js/client/battles-client.js"></script>
 		<script src="../js/presenter/battles-game-presenter.js"></script>
 		<script>
@@ -43,7 +44,6 @@
 			GameUI.createOpponentBoards();
 			GameUI.renderWordTables();
 			BattlesGamePresenter.init();
-			SoloView.init(BattlesGamePresenter);
 		</script>
 	</body>
 </html>

@@ -3,28 +3,24 @@ package pl.szinton.querky.websocket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import pl.szinton.querky.message.EventMessage;
-import pl.szinton.querky.service.play.WordsService;
+import pl.szinton.querky.service.play.WordsBattlesService;
 import pl.szinton.querky.utils.StringParsingUtils;
 
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class WordsInputController {
-
-    protected static final String DATA_INT_PARSE_EXCEPTION_MESSAGE =
-            "Failed to parse WebSockets message content - first argument must by a number.";
+public class WordsBattlesInputController {
 
     protected final WordsOutputController outputController;
-    protected final WordsService wordsService;
+    protected final WordsBattlesService wordsService;
 
     @MessageMapping("/words/join-table")
     public void handleJoinedTable(@Header("simpSessionId") String sessionId, List<String> dataMsg) {
         String username = "" + sessionId; // TODO: fetch from user
-        int tableNumber = StringParsingUtils.toInt(dataMsg.get(0), DATA_INT_PARSE_EXCEPTION_MESSAGE);
+        int tableNumber = StringParsingUtils.toInt(dataMsg.get(0));
         EventMessage response = wordsService.joinTable(username, tableNumber);
         outputController.sendDirectMessage(username, response);
         if (!response.isError()) {
@@ -57,10 +53,5 @@ public class WordsInputController {
         int tableNumber = wordsService.getPlayersTableNumber(username);
         outputController.broadcastTableMessage(tableNumber, msg);
         wordsService.checkIfAllPlayersOnTableFinished(tableNumber);
-    }
-
-    @MessageMapping("/words/solo/guess")
-    public void handleSoloGuess(@Header("simpSessionId") String sessionId, List<String> dataMsg) {
-        // TODO: fetch wordId and guessWord from dataMsg
     }
 }

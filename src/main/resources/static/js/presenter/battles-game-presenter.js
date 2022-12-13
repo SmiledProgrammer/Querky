@@ -36,7 +36,6 @@ let BattlesGamePresenter = new function() {
 
 	this.init = function() {
 		resetGameState();
-		BattlesView.init();
 		BattlesClient.init();
 		BattlesClient.handleJoinedTableData = this.handleJoinedTableData;
 		BattlesClient.handlePlayerJoinedTable = this.handlePlayerJoinedTable;
@@ -47,6 +46,8 @@ let BattlesGamePresenter = new function() {
 		BattlesClient.handleRoundEnd = this.handleRoundEnd;
 		BattlesClient.handlePlayerGuess = this.handlePlayerGuess;
 		BattlesClient.handleDisallowedWordError = this.handleDisallowedWordError;
+		SoloView.initForBattlesGame(BattlesGamePresenter);
+		BattlesView.init();
 	};
 
 	this.joinTable = function(tableNumber) {
