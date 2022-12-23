@@ -5,9 +5,8 @@ let GameClientCommon = new function() {
     this.connectStomp = function(msgHandlingFunction, onConnectionFunction) {
         let socket = new SockJS("/querky");
         let stompClient = Stomp.over(socket);
-        let sessionId;
         stompClient.connect({}, function() {
-            sessionId = /\/([^\/]+)\/websocket/.exec(socket._transport.url)[1];
+            let sessionId = /\/([^\/]+)\/websocket/.exec(socket._transport.url)[1];
             console.log("Connected to Querky. Session ID is: " + sessionId);
             stompClient.subscribe("/queue/direct-" + sessionId, msgHandlingFunction);
             stompClient.subscribe("/topic/words", msgHandlingFunction);
@@ -15,7 +14,7 @@ let GameClientCommon = new function() {
                 onConnectionFunction(stompClient, sessionId);
             }
         });
-        return [stompClient, sessionId];
+        return stompClient;
     };
 
     this.convertRawJson = function(rawJson) {

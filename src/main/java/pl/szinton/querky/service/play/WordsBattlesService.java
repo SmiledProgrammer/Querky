@@ -5,11 +5,13 @@ import pl.szinton.querky.enums.WordsEvent;
 import pl.szinton.querky.enums.WordsGameState;
 import pl.szinton.querky.game.words.BattlesGame;
 import pl.szinton.querky.game.words.LetterMatch;
+import pl.szinton.querky.game.words.Player;
 import pl.szinton.querky.message.EventMessage;
 import pl.szinton.querky.service.rest.WordsDictionaryService;
 import pl.szinton.querky.websocket.WordsOutputController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -52,8 +54,10 @@ public class WordsBattlesService {
         }
         table.addPlayer(username);
         playersOnTables.put(username, tableNumber);
+        List<Player> playerList = table.getPlayersList();
+        int joiningPlayerIndex = getIndexOfPlayer(playerList, username);
         return EventMessage.fromWordsEvent(WordsEvent.TABLE_DATA, tableNumber, table.getGameStartTimeLeft(),
-                table.getRoundsLeft(), table.getRoundTimeLeft(), table.getGameState(), table.getPlayersList());
+                table.getRoundsLeft(), table.getRoundTimeLeft(), table.getGameState(), playerList, joiningPlayerIndex);
     }
 
     public EventMessage leaveTable(String username) {
@@ -117,5 +121,15 @@ public class WordsBattlesService {
         for (BattlesGame table : gameTables.values()) {
             table.handleTimerTick();
         }
+    }
+
+    private int getIndexOfPlayer(List<Player> playerList, String username) {
+        for (int i = 0; i < playerList.size(); i++) {
+            Player player = playerList.get(i);
+            if (username.equals(player.getUsername())) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

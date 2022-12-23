@@ -3,12 +3,9 @@
 let SoloClient = new function() {
 
     let m_stompClient = undefined;
-    let m_sessionId = undefined;
 
     this.init = function(onConnectionFunction) {
-        let connectionResult = GameClientCommon.connectStomp(this.handleReceiveMessage, onConnectionFunction);
-        m_stompClient = connectionResult[0];
-        m_sessionId = connectionResult[1];
+        m_stompClient = GameClientCommon.connectStomp(this.handleReceiveMessage, onConnectionFunction);
     };
 
     this.handleReceiveMessage = function(rawMsg) {

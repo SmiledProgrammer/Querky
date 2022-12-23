@@ -22,6 +22,7 @@ let BattlesGamePresenter = new function() {
 	let m_gameState;
 	let m_players;
 	let m_timerId;
+	let m_activePlayerUsername;
 
 	let resetGameState = function() {
 		m_tableNumber = 0;
@@ -71,7 +72,9 @@ let BattlesGamePresenter = new function() {
 		BattlesClient.sendGuess(guess);
 	};
 
-	this.handleJoinedTableData = function(tableNumber, gameStartTime, roundsLeft, roundTime, gameState, players) {
+	this.handleJoinedTableData = function(tableNumber, gameStartTime, roundsLeft, roundTime,
+										  gameState, players, joiningPlayerIndex) {
+		m_activePlayerUsername = players[joiningPlayerIndex].username;
 		m_tableNumber = tableNumber;
 		m_gameStartTimeLeft = gameStartTime;
 		m_roundsLeft = roundsLeft;
@@ -82,10 +85,9 @@ let BattlesGamePresenter = new function() {
 			startGameStartCountdown();
 		}
 		// TODO: load actual game state in any moment of the game
-		let activeUsername = BattlesClient.getClientUsername();
 		let roundNumber = ROUND_COUNT - m_roundsLeft + 1;
-		BattlesView.updateViewOnJoinTableData(activeUsername, m_tableNumber, m_gameStartTimeLeft,
-												roundNumber, m_roundTimeLeft, m_players);
+		BattlesView.updateViewOnJoinTableData(m_activePlayerUsername, m_tableNumber, m_gameStartTimeLeft,
+											  roundNumber, m_roundTimeLeft, m_players);
 	};
 
 	this.handlePlayerJoinedTable = function(username) {
@@ -268,7 +270,7 @@ let BattlesGamePresenter = new function() {
 	};
 	
 	let isActivePlayer = function(username) {
-		return username === BattlesClient.getClientUsername();
+		return username === m_activePlayerUsername;
 	};
 
 	let isCorrectMatch = function(matchList) {

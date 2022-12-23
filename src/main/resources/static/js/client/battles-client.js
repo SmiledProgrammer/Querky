@@ -3,13 +3,10 @@
 let BattlesClient = new function() {
 
 	let m_stompClient;
-	let m_sessionId;
 	let m_tableSubscriptionId;
 
 	this.init = function(onConnectionFunction) {
-		let connectionResult = GameClientCommon.connectStomp(this.handleReceiveMessage, onConnectionFunction);
-		m_stompClient = connectionResult[0];
-		m_sessionId = connectionResult[1];
+		m_stompClient = GameClientCommon.connectStomp(this.handleReceiveMessage, onConnectionFunction);
 	};
 
 	this.handleReceiveMessage = function(rawMsg) {
@@ -23,7 +20,7 @@ let BattlesClient = new function() {
 			return;
 		}
 		switch (msg.c) {
-			case 101: receiveJoinedTableData(msg.d[0], msg.d[1], msg.d[2], msg.d[3], msg.d[4], msg.d[5]); break;
+			case 101: receiveJoinedTableData(msg.d[0], msg.d[1], msg.d[2], msg.d[3], msg.d[4], msg.d[5], msg.d[6]); break;
 			case 102: receivePlayerJoinedTable(msg.d[0]); break;
 			case 103: receivePlayerLeftTable(msg.d[0]); break;
 			case 105: receivePlayerReady(msg.d[0]); break;
@@ -33,10 +30,6 @@ let BattlesClient = new function() {
 			case 221: receivePlayerGuess(msg.d[0], msg.d[1].matches); break;
 			default: console.error("Unknown websockets message type.");
 		}
-	};
-
-	this.getClientUsername = function() {
-		return m_sessionId;
 	};
 
 	this.sendJoinTable = function(tableNumber) {
@@ -55,8 +48,10 @@ let BattlesClient = new function() {
 		m_stompClient.send("/app/words/guess", {}, "[\"" + wordGuess + "\"]");
 	};
 
-	let receiveJoinedTableData = function(tableNumber, gameStartTime, roundsLeft, roundTime, gameState, players) {
-		BattlesClient.handleJoinedTableData(tableNumber, gameStartTime, roundsLeft, roundTime, gameState, players);
+	let receiveJoinedTableData = function(tableNumber, gameStartTime, roundsLeft, roundTime,
+										  gameState, players, joiningPlayerIndex) {
+		BattlesClient.handleJoinedTableData(tableNumber, gameStartTime, roundsLeft, roundTime,
+											gameState, players, joiningPlayerIndex);
 		let tableSubscription = m_stompClient.subscribe("/topic/table-" + tableNumber, BattlesClient.handleReceiveMessage);
 		m_tableSubscriptionId = tableSubscription.id;
 	};

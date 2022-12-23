@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static pl.szinton.querky.game.words.Constants.GUESS_COUNT;
-import static pl.szinton.querky.game.words.Constants.PLAYERS_LIMIT;
 
 @Getter
-class Player {
+public class Player {
 
     private final String username;
     private boolean isPlaying;

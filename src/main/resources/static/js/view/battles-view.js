@@ -2,8 +2,6 @@
 
 let BattlesView = new function() {
 
-    const usernames = ["Niszczyciel", "Stokrotka", "Władziu", "XDkox"]; // TODO: remove
-
     let m_tableNumberSpan;
     let m_roundNumberSpan;
     let m_roundTimerSpan;
@@ -27,11 +25,12 @@ let BattlesView = new function() {
         let activePlayerIndex = playerUsernames.indexOf(activePlayerUsername);
         for (let i = 0; i < players.size; i++) {
             let username = playerUsernames[i];
-            if (i !== activePlayerIndex) {
-                let opponentId = i + 1;
-                m_playerDivIds.set(username, opponentId);
+            if (i < activePlayerIndex) {
+                m_playerDivIds.set(username, i + 1);
+            } else if (i > activePlayerIndex) {
+                m_playerDivIds.set(username, i);
             }
-            getPlayerUsernameSpan(username).textContent = usernames[i]; // TODO: remove
+            getPlayerUsernameSpan(username).textContent = username;
             let score = players.get(username).points;
             getPlayerScoreSpan(username).textContent = "- " + score + " -";
         }
@@ -40,7 +39,7 @@ let BattlesView = new function() {
     this.updateViewOnPlayerJoinedTable = function(username) {
         let playerDivId = m_playerDivIds.size;
         m_playerDivIds.set(username, playerDivId);
-        getPlayerUsernameSpan(username).textContent = usernames[playerDivId]; // TODO: remove
+        getPlayerUsernameSpan(username).textContent = username;
         getPlayerScoreSpan(username).textContent = "- 0 -";
     };
 
@@ -50,18 +49,6 @@ let BattlesView = new function() {
 
     this.updateViewOnGameStartCountdownStart = function() {
         setAllTableOverlaysGray();
-    };
-
-    this.updateViewOnGameStartCountdownCancel = function() {
-
-    };
-
-    this.updateViewOnGameStart = function() {
-
-    };
-
-    this.updateViewOnBreakGame = function() {
-
     };
 
     this.updateViewOnRoundCountdownStart = function() {
@@ -91,7 +78,7 @@ let BattlesView = new function() {
     };
 
     this.updateViewOnGameEnd = function() {
-
+        // TODO
     };
 
     // TODO: make this function used only in context of currently running round (not when round countdown is going)
