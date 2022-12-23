@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import static pl.szinton.querky.game.words.Constants.*;
 
-@Slf4j // TODO: remove
+@Slf4j
 @Getter
 public class BattlesGame {
 

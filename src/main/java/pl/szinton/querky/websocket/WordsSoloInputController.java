@@ -5,9 +5,11 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import pl.szinton.querky.message.EventMessage;
+import pl.szinton.querky.security.SessionManager;
 import pl.szinton.querky.service.play.WordsSoloService;
 import pl.szinton.querky.utils.StringParsingUtils;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -16,20 +18,20 @@ public class WordsSoloInputController {
 
     protected final WordsOutputController outputController;
     protected final WordsSoloService wordsSoloService;
+    protected final SessionManager sessionManager;
 
     @MessageMapping("/words/solo/random-word")
-    public void handleRandomWordRequest(@Header("simpSessionId") String sessionId) {
-        String username = "" + sessionId; // TODO: fetch from user
+    public void handleRandomWordRequest(@Header("simpSessionId") String sessionId, Principal principal) {
+        sessionManager.setPrincipalWebSocketSessionId(principal, sessionId);
         EventMessage msg = wordsSoloService.getRandomWordId();
-        outputController.sendDirectMessage(username, msg);
+        outputController.sendDirectMessage(principal, msg);
     }
 
     @MessageMapping("/words/solo/guess")
-    public void handleSoloGuess(@Header("simpSessionId") String sessionId, List<String> dataMsg) {
-        String username = "" + sessionId; // TODO: fetch from user
+    public void handleSoloGuess(Principal principal, List<String> dataMsg) {
         int wordId = StringParsingUtils.toInt(dataMsg.get(0));
         String guessWord = dataMsg.get(1);
         EventMessage msg = wordsSoloService.makeGuess(wordId, guessWord);
-        outputController.sendDirectMessage(username, msg);
+        outputController.sendDirectMessage(principal, msg);
     }
 }

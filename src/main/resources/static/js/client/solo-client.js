@@ -11,11 +11,6 @@ let SoloClient = new function() {
         m_sessionId = connectionResult[1];
     };
 
-    this.onConnection = function(stompClient, sessionId) {
-        stompClient.subscribe("/queue/direct-" + sessionId, this.handleReceiveMessage);
-        stompClient.subscribe("/topic/words", this.handleReceiveMessage);
-    };
-
     this.handleReceiveMessage = function(rawMsg) {
         let msg = GameClientCommon.convertRawJson(rawMsg);
         if (msg.error === true) {

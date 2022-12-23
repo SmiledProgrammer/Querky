@@ -10,8 +10,8 @@ import java.util.Set;
 @Service
 public class WordsDictionaryService {
 
-    private static final String WORDS_TO_ENTER_PATH = "static/dictionaries/words-to-enter.txt";
-    private static final String WORDS_TO_GUESS_PATH = "static/dictionaries/words-to-guess.txt";
+    private static final String WORDS_TO_ENTER_PATH = "dictionaries/words-to-enter.txt";
+    private static final String WORDS_TO_GUESS_PATH = "dictionaries/words-to-guess.txt";
 
     private final Set<String> wordsToEnter;
     private final List<String> wordsToGuess;

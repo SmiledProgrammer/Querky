@@ -28,7 +28,8 @@ public class UserService {
 
     // For future use case
     public void registerUser(@Valid RegisterUserDto userDto) {
-        String email = OAuth2Utils.getCurrentUserEmail();
+//        String email = OAuth2Utils.getCurrentUserEmail();
+        String email = ""; // TODO: fix
         User newUser = User.builder()
                 .username(userDto.getUsername())
                 .email(email)

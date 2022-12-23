@@ -21,10 +21,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .anyRequest().permitAll(); // TODO: remove and uncomment below
-//                .anyRequest().authenticated()
-//                .and()
-//                .oauth2Login()
-//                .successHandler(successHandler);
+                .anyRequest().authenticated()
+                .and()
+                .oauth2Login()
+                .successHandler(successHandler);
     }
 }

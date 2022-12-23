@@ -5,9 +5,11 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import pl.szinton.querky.message.EventMessage;
+import pl.szinton.querky.security.SessionManager;
 import pl.szinton.querky.service.play.WordsBattlesService;
 import pl.szinton.querky.utils.StringParsingUtils;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -16,25 +18,28 @@ public class WordsBattlesInputController {
 
     protected final WordsOutputController outputController;
     protected final WordsBattlesService wordsService;
+    protected final SessionManager sessionManager;
 
     @MessageMapping("/words/join-table")
-    public void handleJoinedTable(@Header("simpSessionId") String sessionId, List<String> dataMsg) {
-        String username = "" + sessionId; // TODO: fetch from user
+    public void handleJoinedTable(@Header("simpSessionId") String sessionId,
+                                  Principal principal, List<String> dataMsg) {
+        String username = sessionManager.getPrincipalUsername(principal);
+        sessionManager.setPrincipalWebSocketSessionId(principal, sessionId);
         int tableNumber = StringParsingUtils.toInt(dataMsg.get(0));
-        EventMessage response = wordsService.joinTable(username, tableNumber);
-        outputController.sendDirectMessage(username, response);
-        if (!response.isError()) {
+        EventMessage msg = wordsService.joinTable(username, tableNumber);
+        outputController.sendDirectMessage(principal, msg);
+        if (!msg.isError()) {
             EventMessage broadcast = wordsService.broadcastJoinedTable(username);
             outputController.broadcastTableMessage(tableNumber, broadcast);
         }
     }
 
     @MessageMapping("/words/leave-table")
-    public void handleLeftTable(@Header("simpSessionId") String sessionId) {
-        String username = "" + sessionId; // TODO: fetch from user
+    public void handleLeftTable(Principal principal) {
+        String username = sessionManager.getPrincipalUsername(principal);
         EventMessage msg = wordsService.leaveTable(username);
         if (msg.isError()) {
-            outputController.sendDirectMessage(username, msg);
+            outputController.sendDirectMessage(principal, msg);
             return;
         }
         int tableNumber = wordsService.getPlayersTableNumber(username);
@@ -42,12 +47,12 @@ public class WordsBattlesInputController {
     }
 
     @MessageMapping("/words/guess")
-    public void handlePlayerGuess(@Header("simpSessionId") String sessionId, List<String> dataMsg) {
-        String username = "" + sessionId; // TODO: fetch from user
+    public void handlePlayerGuess(Principal principal, List<String> dataMsg) {
+        String username = sessionManager.getPrincipalUsername(principal);
         String guessWord = dataMsg.get(0);
         EventMessage msg = wordsService.makeGuess(username, guessWord);
         if (msg.isError()) {
-            outputController.sendDirectMessage(username, msg);
+            outputController.sendDirectMessage(principal, msg);
             return;
         }
         int tableNumber = wordsService.getPlayersTableNumber(username);

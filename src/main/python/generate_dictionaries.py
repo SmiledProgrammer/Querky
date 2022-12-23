@@ -6,7 +6,7 @@ from typing import Set, Dict
 # http://czterycztery.pl/slowo/lista_frekwencyjna_z_odmianami/
 # https://sjp.pl/sl/growe/?d=6
 
-BASE_PATH = '../resources/static/dictionaries/'
+BASE_PATH = '../resources/dictionaries/'
 
 def get_words_from_sjp() -> Set[str]:
   words = set()

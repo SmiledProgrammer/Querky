@@ -36,7 +36,7 @@ let BattlesGamePresenter = new function() {
 
 	this.init = function() {
 		resetGameState();
-		BattlesClient.init();
+		BattlesClient.init(this.onConnection);
 		BattlesClient.handleJoinedTableData = this.handleJoinedTableData;
 		BattlesClient.handlePlayerJoinedTable = this.handlePlayerJoinedTable;
 		BattlesClient.handlePlayerLeftTable = this.handlePlayerLeftTable;
@@ -49,6 +49,11 @@ let BattlesGamePresenter = new function() {
 		SoloView.initForBattlesGame(BattlesGamePresenter);
 		BattlesView.init();
 	};
+
+	this.onConnection = function() {
+		BattlesClient.sendJoinTable(100); // TODO: execute differently
+	};
+
 
 	this.joinTable = function(tableNumber) {
 		BattlesClient.sendJoinTable(tableNumber);
