@@ -3,9 +3,7 @@ package pl.szinton.querky.security;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import pl.szinton.querky.utils.OAuth2Utils;
 
 import java.security.Principal;
 import java.util.HashMap;

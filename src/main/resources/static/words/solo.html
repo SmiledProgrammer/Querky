@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="pl">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="description" content="Simple word guessing game">
-		<meta name="keywords" content="words, word game, słowa, gra słowna">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="../css/main.css">
-		<link rel="stylesheet" href="../css/game.css">
-		<title>Word game - Solo mode</title>
-	</head>
-	<body class="unselectable">
-		<div class="gameArea">
-			<div id="activePlayer" class="activeBoard playerBoard"></div>
-			<div id="keyboard" class="gameKeyboard">
-			</div>
-		</div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Simple word guessing game">
+    <meta name="keywords" content="words, word game, słowa, gra słowna">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/game.css">
+    <title>Word game - Solo mode</title>
+</head>
+<body class="unselectable">
+<div class="gameArea">
+    <div id="activePlayer" class="activeBoard playerBoard"></div>
+    <div id="keyboard" class="gameKeyboard">
+    </div>
+</div>
 
-		<script src="/webjars/sockjs-client/1.1.1/sockjs.min.js"></script>
-		<script src="/webjars/stomp-websocket/2.3.4/stomp.min.js"></script>
-		<script src="../js/render/website-ui.js"></script>
-		<script src="../js/render/game-ui.js"></script>
-		<script src="../js/view/game-view-common.js"></script>
-		<script src="../js/view/solo-view.js"></script>
-		<script src="../js/client/game-client-common.js"></script>
-		<script src="../js/client/solo-client.js"></script>
-		<script src="../js/presenter/solo-game-presenter.js"></script>
-		<script>
-			WebsiteUI.renderHeader();
-			WebsiteUI.renderFooter();
-			GameUI.renderKeyboard();
-			GameUI.renderWordTables();
-			SoloGamePresenter.init();
-		</script>
-	</body>
+<script src="/webjars/sockjs-client/1.1.1/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/2.3.4/stomp.min.js"></script>
+<script src="../js/render/website-ui.js"></script>
+<script src="../js/render/game-ui.js"></script>
+<script src="../js/view/game-view-common.js"></script>
+<script src="../js/view/solo-view.js"></script>
+<script src="../js/client/game-client-common.js"></script>
+<script src="../js/client/solo-client.js"></script>
+<script src="../js/presenter/solo-game-presenter.js"></script>
+<script>
+    WebsiteUI.renderHeader();
+    WebsiteUI.renderFooter();
+    GameUI.renderKeyboard();
+    GameUI.renderWordTables();
+    SoloGamePresenter.init();
+</script>
+</body>
 </html>

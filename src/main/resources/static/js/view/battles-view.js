@@ -1,21 +1,21 @@
 'use strict';
 
-let BattlesView = new function() {
+let BattlesView = new function () {
 
     let m_tableNumberSpan;
     let m_roundNumberSpan;
     let m_roundTimerSpan;
     let m_playerDivIds;
 
-    this.init = function() {
+    this.init = function () {
         m_tableNumberSpan = document.getElementById("tableNumber");
         m_roundNumberSpan = document.getElementById("roundNumber");
         m_roundTimerSpan = document.getElementById("roundTimer");
         m_playerDivIds = new Map();
     };
 
-    this.updateViewOnJoinTableData = function(activePlayerUsername, tableNumber, gameStartTime,
-                                              roundNumber, roundTime, players) {
+    this.updateViewOnJoinTableData = function (activePlayerUsername, tableNumber, gameStartTime,
+                                               roundNumber, roundTime, players) {
         setTableNumber(tableNumber);
         // TODO: handle game time left
         setRoundNumber(roundNumber);
@@ -36,37 +36,37 @@ let BattlesView = new function() {
         }
     };
 
-    this.updateViewOnPlayerJoinedTable = function(username) {
+    this.updateViewOnPlayerJoinedTable = function (username) {
         let playerDivId = m_playerDivIds.size;
         m_playerDivIds.set(username, playerDivId);
         getPlayerUsernameSpan(username).textContent = username;
         getPlayerScoreSpan(username).textContent = "- 0 -";
     };
 
-    this.updateViewOnPlayerLeftTable = function(username) {
+    this.updateViewOnPlayerLeftTable = function (username) {
         // TODO
     };
 
-    this.updateViewOnGameStartCountdownStart = function() {
+    this.updateViewOnGameStartCountdownStart = function () {
         setAllTableOverlaysGray();
     };
 
-    this.updateViewOnRoundCountdownStart = function() {
+    this.updateViewOnRoundCountdownStart = function () {
         setAllTableWithoutOverlaysGray();
     };
 
-    this.updateViewOnGuessingPhaseStart = function() {
+    this.updateViewOnGuessingPhaseStart = function () {
         clearAllTableOverlays();
     };
 
-    this.updateViewOnRoundEnd = function(pointsList) {
+    this.updateViewOnRoundEnd = function (pointsList) {
         for (const [username, _] of m_playerDivIds) {
             let points = pointsList[username];
             getPlayerScoreSpan(username).textContent = "- " + points + " -";
         }
     };
 
-    this.updateViewOnOpponentGuess = function(username, matchList, activeRow) {
+    this.updateViewOnOpponentGuess = function (username, matchList, activeRow) {
         if (matchList.length > 0) {
             let opponentId = m_playerDivIds.get(username);
             for (let i = 0; i < WORD_LENGTH; i++) {
@@ -77,37 +77,37 @@ let BattlesView = new function() {
         }
     };
 
-    this.updateViewOnGameEnd = function() {
+    this.updateViewOnGameEnd = function () {
         // TODO
     };
 
     // TODO: make this function used only in context of currently running round (not when round countdown is going)
-    this.setRoundTimeLeft = function(roundTime) {
+    this.setRoundTimeLeft = function (roundTime) {
         let minutes = Math.floor(roundTime / 60);
         let seconds = (roundTime % 60).toLocaleString(
-            'en-US', { minimumIntegerDigits: 2, useGrouping: false });
+            'en-US', {minimumIntegerDigits: 2, useGrouping: false});
         m_roundTimerSpan.textContent = minutes + ":" + seconds;
         if (roundTime > ROUND_DURATION) {
             setRoundStartCountdownTimeLeft(roundTime - ROUND_DURATION);
         }
     };
 
-    this.setGameStartCountdownTimeLeft = function(time) {
+    this.setGameStartCountdownTimeLeft = function (time) {
         let mainOverlayDiv = getMainOverlayDiv();
         mainOverlayDiv.textContent = "Gra zaczyna się za " + time + " sekund...";
     };
 
-    this.markPlayerHasGuessed = function(username) {
+    this.markPlayerHasGuessed = function (username) {
         let overlayDiv = getPlayerOverlayDiv(username);
         overlayDiv.setAttribute("class", "overlay overlayGreen");
     };
 
-    this.markPlayerHasFailedToGuess = function(username) {
+    this.markPlayerHasFailedToGuess = function (username) {
         let overlayDiv = getPlayerOverlayDiv(username);
         overlayDiv.setAttribute("class", "overlay overlayRed");
     };
 
-    this.resetOpponentsTables = function() {
+    this.resetOpponentsTables = function () {
         for (let i = 1; i < PLAYERS_COUNT; i++) {
             for (let row = 0; row < TRIES_COUNT; row++) {
                 for (let col = 0; col < WORD_LENGTH; col++) {
@@ -118,19 +118,19 @@ let BattlesView = new function() {
         }
     };
 
-    let setRoundStartCountdownTimeLeft = function(time) {
+    let setRoundStartCountdownTimeLeft = function (time) {
         let mainOverlayDiv = getMainOverlayDiv();
         mainOverlayDiv.textContent = "Runda zaczyna się za " + time + " sekund...";
     };
 
-    let setAllTableOverlaysGray = function() {
+    let setAllTableOverlaysGray = function () {
         let overlayDivs = document.getElementsByClassName("overlay");
         for (let overlay of overlayDivs) {
             overlay.setAttribute("class", "overlay overlayGray");
         }
     };
 
-    let setAllTableWithoutOverlaysGray = function() {
+    let setAllTableWithoutOverlaysGray = function () {
         let overlayDivs = document.getElementsByClassName("overlay");
         for (let overlay of overlayDivs) {
             if (overlay.getAttribute("class") === "overlay") {
@@ -139,7 +139,7 @@ let BattlesView = new function() {
         }
     };
 
-    let clearAllTableOverlays = function() {
+    let clearAllTableOverlays = function () {
         let overlayDivs = document.getElementsByClassName("overlay");
         for (let overlay of overlayDivs) {
             overlay.setAttribute("class", "overlay");
@@ -147,34 +147,34 @@ let BattlesView = new function() {
         }
     };
 
-    let setTableNumber = function(tableNumber) {
+    let setTableNumber = function (tableNumber) {
         m_tableNumberSpan.textContent = "Stół #" + tableNumber;
     };
 
-    let setRoundNumber = function(roundNumber) {
+    let setRoundNumber = function (roundNumber) {
         m_roundNumberSpan.textContent = "Runda " + roundNumber;
     };
 
-    let getPlayerUsernameSpan = function(username) {
+    let getPlayerUsernameSpan = function (username) {
         let playerId = m_playerDivIds.get(username);
         let usernameSpanId = (playerId === 0) ? "activeUsername" : "opponentUsername-" + playerId;
         return document.getElementById(usernameSpanId);
     };
 
-    let getPlayerScoreSpan = function(username) {
+    let getPlayerScoreSpan = function (username) {
         let playerId = m_playerDivIds.get(username);
         let scoreSpanId = (playerId === 0) ? "activeScore" : "opponentScore-" + playerId;
         return document.getElementById(scoreSpanId);
     };
 
-    let getPlayerOverlayDiv = function(username) {
+    let getPlayerOverlayDiv = function (username) {
         let playerId = m_playerDivIds.get(username);
         let divPrefix = (playerId === 0) ? "activePlayer-" : "opponent-" + playerId;
         let divId = divPrefix + "-overlay";
         return document.getElementById(divId);
     };
 
-    let getMainOverlayDiv = function() {
+    let getMainOverlayDiv = function () {
         let divId = "activePlayer-overlay";
         return document.getElementById(divId);
     };

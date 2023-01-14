@@ -1,6 +1,6 @@
 'use strict';
 
-let GameViewCommon = new function() {
+let GameViewCommon = new function () {
 
     this.LetterClasses = new Map([
         ["0", "letterNotInWord"],
@@ -8,7 +8,7 @@ let GameViewCommon = new function() {
         ["2", "letterCorrect"]
     ]);
 
-    let revertMap = function(map) {
+    let revertMap = function (map) {
         return new Map(Array.from(map, entry => [entry[1], entry[0]]));
     };
 
@@ -22,7 +22,7 @@ let GameViewCommon = new function() {
         SoloView.handleKeyboardKeyUp(event.code);
     });
 
-    this.getPlayersLetterCell = function(player, row, column) {
+    this.getPlayersLetterCell = function (player, row, column) {
         let cellId = player + "-" + row.toString() + "-" + column.toString();
         return document.getElementById(cellId);
     };

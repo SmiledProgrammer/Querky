@@ -1,10 +1,10 @@
 'use strict';
 
-let SoloGamePresenter = new function() {
+let SoloGamePresenter = new function () {
 
     let m_wordId;
 
-    this.init = function() {
+    this.init = function () {
         SoloClient.init(this.onConnection);
         SoloClient.handleRandomWord = this.handleRandomWord;
         SoloClient.handleGuessResponse = this.handleGuessResponse;
@@ -12,24 +12,24 @@ let SoloGamePresenter = new function() {
         SoloView.initForSoloGame(SoloGamePresenter);
     };
 
-    this.onConnection = function() {
+    this.onConnection = function () {
         SoloClient.sendRandomWordRequest();
     };
 
-    this.makeGuess = function(guess) {
+    this.makeGuess = function (guess) {
         console.log("Sending guess: (" + m_wordId + ", " + guess + ")");
         SoloClient.sendGuess(m_wordId, guess);
     };
 
-    this.handleRandomWord = function(wordId) {
+    this.handleRandomWord = function (wordId) {
         m_wordId = wordId;
     };
 
-    this.handleGuessResponse = function(matchList) {
+    this.handleGuessResponse = function (matchList) {
         SoloView.markGuess(matchList);
     };
 
-    this.handleDisallowedWordError = function() {
+    this.handleDisallowedWordError = function () {
         SoloView.markGuess(null);
     }
 }

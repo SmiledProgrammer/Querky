@@ -7,7 +7,6 @@ import pl.szinton.querky.dto.UserDto;
 import pl.szinton.querky.entity.User;
 import pl.szinton.querky.exception.ResourceNotFoundException;
 import pl.szinton.querky.repo.UserRepository;
-import pl.szinton.querky.utils.OAuth2Utils;
 
 import javax.validation.Valid;
 
