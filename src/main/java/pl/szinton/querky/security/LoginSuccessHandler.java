@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import pl.szinton.querky.service.rest.UserService;
+import pl.szinton.querky.service.rest.IUserService;
 import pl.szinton.querky.utils.OAuth2Utils;
 
 import javax.servlet.ServletException;
@@ -16,7 +16,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final UserService userService;
+    private final IUserService userService;
     private final SessionManager sessionManager;
 
     @Override

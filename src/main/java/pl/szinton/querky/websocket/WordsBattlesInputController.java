@@ -6,7 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import pl.szinton.querky.message.EventMessage;
 import pl.szinton.querky.security.SessionManager;
-import pl.szinton.querky.service.play.WordsBattlesService;
+import pl.szinton.querky.service.play.IWordsBattlesService;
 import pl.szinton.querky.utils.StringParsingUtils;
 
 import java.security.Principal;
@@ -14,12 +14,13 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class WordsBattlesInputController {
+public class WordsBattlesInputController implements IWordsBattlesInputController {
 
-    protected final WordsOutputController outputController;
-    protected final WordsBattlesService wordsService;
+    protected final IOutputController outputController;
+    protected final IWordsBattlesService wordsService;
     protected final SessionManager sessionManager;
 
+    @Override
     @MessageMapping("/words/join-table")
     public void handleJoinedTable(@Header("simpSessionId") String sessionId,
                                   Principal principal, List<String> dataMsg) {
@@ -34,6 +35,7 @@ public class WordsBattlesInputController {
         }
     }
 
+    @Override
     @MessageMapping("/words/leave-table")
     public void handleLeftTable(Principal principal) {
         String username = sessionManager.getPrincipalUsername(principal);
@@ -46,6 +48,7 @@ public class WordsBattlesInputController {
         outputController.broadcastTableMessage(tableNumber, msg);
     }
 
+    @Override
     @MessageMapping("/words/guess")
     public void handlePlayerGuess(Principal principal, List<String> dataMsg) {
         String username = sessionManager.getPrincipalUsername(principal);

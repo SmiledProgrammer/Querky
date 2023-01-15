@@ -4,48 +4,50 @@ import org.springframework.stereotype.Service;
 import pl.szinton.querky.enums.WordsEvent;
 import pl.szinton.querky.enums.WordsGameState;
 import pl.szinton.querky.game.words.BattlesGame;
+import pl.szinton.querky.game.words.IBattlesGame;
 import pl.szinton.querky.game.words.LetterMatch;
 import pl.szinton.querky.game.words.Player;
 import pl.szinton.querky.message.EventMessage;
-import pl.szinton.querky.service.rest.WordsDictionaryService;
-import pl.szinton.querky.websocket.WordsOutputController;
+import pl.szinton.querky.service.rest.IWordsDictionaryService;
+import pl.szinton.querky.websocket.IOutputController;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
-public class WordsBattlesService {
+public class DefaultWordsBattlesService implements IWordsBattlesService {
 
     protected static final int TABLES_COUNT = 1;
 
-    protected final WordsOutputController outputController;
-    protected final WordsDictionaryService dictionaryService;
+    protected final IOutputController outputController;
+    protected final IWordsDictionaryService dictionaryService;
     protected final Map<String, Integer> playersOnTables;
-    protected final Map<Integer, BattlesGame> gameTables;
+    protected final Map<Integer, IBattlesGame> gameTables;
 
-    public WordsBattlesService(WordsOutputController outputController, WordsDictionaryService dictionaryService) {
+    public DefaultWordsBattlesService(IOutputController outputController, IWordsDictionaryService dictionaryService) {
         this.outputController = outputController;
         this.dictionaryService = dictionaryService;
         this.playersOnTables = new HashMap<>();
         this.gameTables = new HashMap<>();
-        BattlesGame.initServices(this, dictionaryService);
         for (int i = 0; i < TABLES_COUNT; i++) {
             int tableNumber = 100 + i;
-            BattlesGame newGame = new BattlesGame(tableNumber);
+            IBattlesGame newGame = new BattlesGame(tableNumber, this, dictionaryService);
             this.gameTables.put(tableNumber, newGame);
         }
     }
 
+    @Override
     public Integer getPlayersTableNumber(String username) {
         return playersOnTables.get(username);
     }
 
+    @Override
     public EventMessage joinTable(String username, int tableNumber) {
         if (!gameTables.containsKey(tableNumber)) {
             return EventMessage.fromWordsEvent(WordsEvent.ERROR_NO_SUCH_TABLE);
         }
-        BattlesGame table = gameTables.get(tableNumber);
+        IBattlesGame table = gameTables.get(tableNumber);
         if (table.hasPlayer(username)) {
             return EventMessage.fromWordsEvent(WordsEvent.ERROR_PLAYER_ALREADY_ON_TABLE);
         }
@@ -60,17 +62,19 @@ public class WordsBattlesService {
                 table.getRoundsLeft(), table.getRoundTimeLeft(), table.getGameState(), playerList, joiningPlayerIndex);
     }
 
+    @Override
     public EventMessage leaveTable(String username) {
         Integer tableNumber = getPlayersTableNumber(username);
         if (tableNumber == null) {
             return EventMessage.fromWordsEvent(WordsEvent.ERROR_PLAYER_NOT_ON_TABLE);
         }
-        BattlesGame table = gameTables.get(tableNumber);
+        IBattlesGame table = gameTables.get(tableNumber);
         table.removePlayer(username);
         playersOnTables.remove(username);
         return EventMessage.fromWordsEvent(WordsEvent.PLAYER_LEFT_TABLE, username);
     }
 
+    @Override
     public EventMessage makeGuess(String username, String guessWord) {
         if (dictionaryService.doesNotContainWord(guessWord)) {
             return EventMessage.fromWordsEvent(WordsEvent.ERROR_DISALLOWED_WORD);
@@ -79,7 +83,7 @@ public class WordsBattlesService {
         if (tableNumber == null) {
             return EventMessage.fromWordsEvent(WordsEvent.ERROR_PLAYER_NOT_ON_TABLE);
         }
-        BattlesGame game = gameTables.get(tableNumber);
+        IBattlesGame game = gameTables.get(tableNumber);
         if (game.getGameState() != WordsGameState.GUESSING_PHASE) {
             return EventMessage.fromWordsEvent(WordsEvent.ERROR_NOT_GUESSING_PHASE);
         }
@@ -93,32 +97,38 @@ public class WordsBattlesService {
         return EventMessage.fromWordsEvent(WordsEvent.PLAYER_GUESS, username, match);
     }
 
+    @Override
     public void checkIfAllPlayersOnTableFinished(int tableNumber) {
-        BattlesGame game = gameTables.get(tableNumber);
+        IBattlesGame game = gameTables.get(tableNumber);
         game.checkIfAllPlayersFinished();
     }
 
+    @Override
     public EventMessage broadcastJoinedTable(String username) {
         return EventMessage.fromWordsEvent(WordsEvent.PLAYER_JOINED_TABLE, username);
     }
 
+    @Override
     public void handleRoundStart(int tableNumber) {
         EventMessage msg = EventMessage.fromWordsEvent(WordsEvent.ROUND_COUNTDOWN_START);
         outputController.broadcastTableMessage(tableNumber, msg);
     }
 
+    @Override
     public void handleGuessingPhaseStart(int tableNumber) {
         EventMessage msg = EventMessage.fromWordsEvent(WordsEvent.ROUND_GUESSING_PHASE_START);
         outputController.broadcastTableMessage(tableNumber, msg);
     }
 
+    @Override
     public void handleRoundEnd(int tableNumber, Map<String, Integer> playerPoints) {
         EventMessage msg = EventMessage.fromWordsEvent(WordsEvent.ROUND_END, playerPoints);
         outputController.broadcastTableMessage(tableNumber, msg);
     }
 
+    @Override
     public void handleTimerTick() {
-        for (BattlesGame table : gameTables.values()) {
+        for (IBattlesGame table : gameTables.values()) {
             table.handleTimerTick();
         }
     }

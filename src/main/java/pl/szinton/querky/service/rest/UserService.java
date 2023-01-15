@@ -12,11 +12,12 @@ import javax.validation.Valid;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements IUserService {
 
     private final UserRepository userRepository;
 
     // Temporary
+    @Override
     public void createUser(String email) {
         User newUser = User.builder()
                 .username(email)
@@ -43,6 +44,7 @@ public class UserService {
         return null;
     }
 
+    @Override
     public boolean userExists(String email) {
         return userRepository.existsByEmail(email);
     }

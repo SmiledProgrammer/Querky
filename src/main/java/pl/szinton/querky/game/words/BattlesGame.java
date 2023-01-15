@@ -3,8 +3,8 @@ package pl.szinton.querky.game.words;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import pl.szinton.querky.enums.WordsGameState;
-import pl.szinton.querky.service.play.WordsBattlesService;
-import pl.szinton.querky.service.rest.WordsDictionaryService;
+import pl.szinton.querky.service.play.IWordsBattlesService;
+import pl.szinton.querky.service.rest.IWordsDictionaryService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,10 +16,10 @@ import static pl.szinton.querky.game.words.Constants.*;
 
 @Slf4j
 @Getter
-public class BattlesGame {
+public class BattlesGame implements IBattlesGame {
 
-    protected static WordsBattlesService wordsService;
-    protected static WordsDictionaryService dictionaryService;
+    protected IWordsBattlesService wordsService;
+    protected IWordsDictionaryService dictionaryService;
 
     protected final int tableNumber;
     protected WordsGameState gameState;
@@ -30,7 +30,9 @@ public class BattlesGame {
     protected final Map<String, Player> players;
     protected final List<String> orderOfCorrectGuesses;
 
-    public BattlesGame(int tableNumber) {
+    public BattlesGame(int tableNumber, IWordsBattlesService wordsService, IWordsDictionaryService dictionaryService) {
+        this.wordsService = wordsService;
+        this.dictionaryService = dictionaryService;
         this.tableNumber = tableNumber;
         this.gameState = WordsGameState.WAITING_FOR_PLAYERS;
         this.currentWord = null;
@@ -41,11 +43,7 @@ public class BattlesGame {
         this.orderOfCorrectGuesses = new ArrayList<>();
     }
 
-    public static void initServices(WordsBattlesService wordsService, WordsDictionaryService dictionaryService) {
-        BattlesGame.wordsService = wordsService;
-        BattlesGame.dictionaryService = dictionaryService;
-    }
-
+    @Override
     public synchronized void addPlayer(String username) {
         log.info("Player {} joined the table.", username);
         if (!hasPlayer(username) && !hasReachedPlayersLimit()) {
@@ -58,6 +56,7 @@ public class BattlesGame {
         }
     }
 
+    @Override
     public synchronized void removePlayer(String username) {
         log.info("Player {} left the table.", username);
         players.remove(username);
@@ -114,6 +113,7 @@ public class BattlesGame {
         startRoundCountdown();
     }
 
+    @Override
     public synchronized LetterMatch processPlayerGuess(String username, String guessWord) {
         if (dictionaryService.doesNotContainWord(guessWord)) {
             return null;
@@ -132,6 +132,7 @@ public class BattlesGame {
         return match;
     }
 
+    @Override
     public synchronized void checkIfAllPlayersFinished() {
         boolean allFinished = true;
         if (orderOfCorrectGuesses.size() != players.size()) {
@@ -166,6 +167,7 @@ public class BattlesGame {
         gameState = WordsGameState.WAITING_FOR_PLAYERS;
     }
 
+    @Override
     public synchronized void handleTimerTick() {
         if (gameState == WordsGameState.GAME_START_COUNTDOWN) {
             log.info("Game start time: {}", gameStartTimeLeft);
@@ -186,22 +188,27 @@ public class BattlesGame {
         }
     }
 
+    @Override
     public List<Player> getPlayersList() {
         return new ArrayList<>(players.values());
     }
 
+    @Override
     public boolean hasPlayer(String username) {
         return players.containsKey(username);
     }
 
+    @Override
     public boolean hasReachedPlayersLimit() {
         return players.size() == PLAYERS_LIMIT;
     }
 
+    @Override
     public boolean playerDoesNotHaveGuessesLeft(String username) {
         return !players.get(username).hasGuessesLeft();
     }
 
+    @Override
     public boolean playerHasAlreadyGuessedCurrentWord(String username) {
         return players.get(username).hasGuessedCorrectly();
     }
